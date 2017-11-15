@@ -219,7 +219,7 @@ set_motor_speed:
     orr r2, r2, r1, lsl #1
     ldr r0, =GPIO_DR
     ldr r1, [r0]
-    and r1, r1, #SET_MOTOR0
+    bic r1, r1, #SET_MOTOR0
     orr r1, r1, r2, lsl #18
     
     mov r0, #0
@@ -233,7 +233,7 @@ motor_2:
     orr r2, r2, r1, lsl #1
     ldr r0, =GPIO_DR
     ldr r1, [r0]
-    and r1, r1, #SET_MOTOR1
+    bic r1, r1, #SET_MOTOR1
     orr r1, r1, r2, lsl #25
   
     mov r0, #0
@@ -270,8 +270,8 @@ set_motors_speed:
     
     @ coloca no GPIO_DR os valores necessarios
     ldr r0, =GPIO_DR
-    ldr r0, [r1]
-    and r1, #SET_MOTORS
+    ldr r1, [r0]
+    bic r1, #SET_MOTORS
     orr r1, r1, r2, lsl #18
     str r1, [r0]
 
@@ -300,4 +300,42 @@ set_time:
 
     movs pc, lr
 
-       
+@ Funcao le o dado do sonar 
+@ Paramentros: 
+@ r0: Identificador do sonar
+@ Retorno:
+@ r0: -1 caso o identificador do sonar seja invalido, valor lido no sonar caso seja um sonar valido
+
+read_sonar:
+    @ mascara para modificar o MUX em GPIO_DR
+    .set SONARES, 0x3E
+    
+    cmp r0, #15
+    movhis pc, lr
+    
+    ldr r1, =GPIO_DR
+    ldr r2, [r1]
+    
+    @ zera o trigger
+    bic r2, #SONARES 
+    str r2, [r1]
+    
+    mov r3, #1
+    orr r3, r3, r0, lsl #1
+    str r3, [r1]
+
+loop:
+    ldr r1, =GPIO_PSR
+    ldr r2, [r1]
+    and r1, r1, #1
+    cmp r1, #1
+    beq fim_loop
+    b loop
+fim_loop:
+    
+    ldr r1, =GPIO_PSR
+    ldr r0, [r1]
+    mov r2, 0xFFF
+    and r0, r0, r2, lsl #6
+             
+    movs pc, lr
