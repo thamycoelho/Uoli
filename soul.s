@@ -1,3 +1,8 @@
+.data 
+@ Alocando espaco para o contador
+CONTADOR:
+    .skip 4
+
 @ Alocando um espaco para a pilha de IRQ
 pilha_IRQ:
     .skip 64
@@ -8,21 +13,21 @@ sp_irq:
 .org 0x0
 .section .iv, "a"
 
-@ Definicao do TIME_SZ
-.set TIME_SZ, #100
+    @ Definicao do TIME_SZ
+    .set TIME_SZ, #100
 
-@ flag para desabilitar interrupcao nos modos FIQ e IRQ 
-.equ I_IRQ, 0x40
-.equ I_FIQ, 0x80
+    @ flag para desabilitar interrupcao nos modos FIQ e IRQ 
+    .equ I_IRQ, 0x40
+    .equ I_FIQ, 0x80
 
-@ flag para os modos IRQ sem interrupcoes
-.equ MODO_IRQ, 0x12+I_IRQ+I_FIQ
+    @ flag para os modos IRQ sem interrupcoes
+    .equ MODO_IRQ, 0x12+I_IRQ+I_FIQ
 
-@ flag para o modo supervisor
+    @ flag para o modo supervisor
     .equ MODO_SUPERVISOR, 0x13
     .equ MODO_SUPER_INTERRUPTION, MODO_SUPERVISOR+I_IRQ+I_FIQ
 
-@ Mascaras para acessar os endereços de GPT
+    @ Mascaras para acessar os endereços de GPT
     .equ GPT_CR,     0x53FA0000
     .equ GPT_PR,     0x53FA0004
     .equ GPT_SR,     0x53FA0008
@@ -171,7 +176,8 @@ IRQ_HANDLE:
 
 @ Tratamento das Syscalls
 SYSCALL_HANDLE:
-
+    @ Definicao da velocidade maxima
+    .set MAX_SPEED, 63
 @ Verifica qual a syscall chamada    
     cmp r7, #16
     beq read_sonar
@@ -197,9 +203,11 @@ SYSCALL_HANDLE:
     
 set_motor_speed:
     @ Mascara para pegar a velocidade do motor e setar o motor_write
-    
+    .set SET_MOTOR0,    0x01FC0000
+    .set SET_MOTOR1,    0xFE000000
+     
     @ caso a velocidade do motor tenha mais que 6 bits (valor maximo 63), entao retorna com r1 = -2
-    cmp r1, #63
+    cmp r1, MAX_SPEED
     movhi r1, #-2
     movhis pc, lr
 
@@ -207,40 +215,89 @@ set_motor_speed:
     cmp r0, #0
     bne motor_2    
 
-    mov r1, r1, lsl #19
+    mov r2, #0
+    orr r2, r2, r1, lsl #1
     ldr r0, =GPIO_DR
-    str r1, [r0]
     ldr r1, [r0]
-    mov r2, #1
-    mov r2, r2, lsl #18
-    orr r1, r2
-    ldr r1, [r0]
+    and r1, r1, #SET_MOTOR0
+    orr r1, r1, r2, lsl #18
     
     mov r0, #0
-    msr CPSR_c, 0x10
     movs pc, lr
         
 motor_2:
     cmp r0, #1
     bne erro
-
-    mov r1, r1, lsl #26
+ 
+    mov r2, #0
+    orr r2, r2, r1, lsl #1
     ldr r0, =GPIO_DR
-    str r1, [r0]
     ldr r1, [r0]
-    mov r2, #1
-    mov r2, r2, lsl #25
-    orr r1, r2
-    ldr r1, [r0]
-    
+    and r1, r1, #SET_MOTOR1
+    orr r1, r1, r2, lsl #25
+  
     mov r0, #0
-    msr CPSR_c, 0x10
     movs pc, lr
     
 erro:
     mov r0, #-1
-    
-    msr CPSR_c, 0x10
     movs pc, lr
 
+@ Define a velocidade dos motores
+@ Parametros:
+@ r0: velocidade para o motor 0
+@ r1: velocidade para o motor 1
+@ retorno:
+@ r0: -1 caso a velocidade do motor 0 seja invalida, -2 caso a velocidade do motor 1 seja invalida, 0 caso definiu as velocidades
 
+set_motors_speed:
+
+    @ Mascara para aplicar a velocidade dos motores
+    .set SET_MOTORS, 0xFFFC0000
+
+    @ Verifica se a velocidade eh maior que a maxima permitida
+    cmp r0, #MAX_SPEED
+    movhi r0, #-1
+    movhis pc, lr
+    cmp r1, #MAX_SPEED
+    movhi r0, #-2
+    movhis pc, lr
+
+    @ coloca em r2 os valores em sequencia dos bits de escrita e as velocidades dos motores
+    mov r2, #0
+    orr r2, r0, r0, lsl #1
+    orr r2, r1, r1, lsl #7
+    
+    @ coloca no GPIO_DR os valores necessarios
+    ldr r0, =GPIO_DR
+    ldr r0, [r1]
+    and r1, #SET_MOTORS
+    orr r1, r1, r2, lsl #18
+    str r1, [r0]
+
+    @ retorna para o codigo do usuario
+    mov r0, #0
+    movs pc, lr
+   
+@ Funcao retorna o tempo do sistema
+@ Retorno:
+@ r0: tempo do sistema
+
+get_time:
+
+    ldr r0, =CONTADOR
+    ldr r0, [r0]
+    
+    movs pc, lr
+
+@ Funcao define um tempo para o sistema
+@ Parametros:
+@ r0: tempo do sistema
+
+set_time:
+    ldr r1, =CONTADOR
+    str r0, [r1]
+
+    movs pc, lr
+
+       
