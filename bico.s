@@ -1,4 +1,8 @@
+.global set_motor_speed
+.global set_motors_speed
+
 .data 
+
 
 .text
 .align 4
