@@ -14,7 +14,7 @@ sp_irq:
 .section .iv, "a"
 
     @ Definicao do TIME_SZ
-    .set TIME_SZ, #100
+    .set TIME_SZ, 100
 
     @ flag para desabilitar interrupcao nos modos FIQ e IRQ 
     .equ I_IRQ, 0x40
@@ -81,7 +81,7 @@ RESET_HANDLER:
     str r0, [r1]
 
     @colocando em GPT_OCR1 o valor que desejo contar (no caso 100)
-    mov r0, TIME_SZ
+    mov r0, #TIME_SZ
     ldr r1, =GPT_OCR1
     str r0, [r1]
 
@@ -207,7 +207,7 @@ set_motor_speed:
     .set SET_MOTOR1,    0xFE000000
      
     @ caso a velocidade do motor tenha mais que 6 bits (valor maximo 63), entao retorna com r1 = -2
-    cmp r1, MAX_SPEED
+    cmp r1, #MAX_SPEED
     movhi r1, #-2
     movhis pc, lr
 
@@ -335,7 +335,7 @@ fim_loop:
     
     ldr r1, =GPIO_PSR
     ldr r0, [r1]
-    mov r2, 0xFFF
+    mov r2, #0xFFF
     and r0, r0, r2, lsl #6
              
     movs pc, lr
