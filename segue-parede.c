@@ -1,4 +1,5 @@
 #include "api_robot2.h"
+#include <stdlib.h>
 
 int _start(int argv, char** argc){
     motor_cfg_t motor0;
