@@ -18,8 +18,8 @@ set_motor_speed:
     svc 0x0
 
 set_motors_speed:
-    ldrb r2, [r0, #1]
-    ldrb r3, [r1, #1]
+    ldrb r2, [r0, #2]
+    ldrb r3, [r1, #2]
 
     mov r0, r2
     mov r1, r3
