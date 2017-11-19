@@ -13,4 +13,6 @@ int _start(int argv, char** argc){
     for(i=0; i<=100;i++){
         set_motors_speed(&motor0, &motor1);
     }
+    
+    return 0;
 }
