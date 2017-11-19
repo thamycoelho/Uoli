@@ -64,7 +64,7 @@ RESET_HANDLER:
     mcr p15, 0, r0, c12, c0, 0
 
     msr  CPSR,  MODO_IRQ  @IRQ mode sem interrupcoes 
-    ldr r0, sp_irq
+    ldr r0, =sp_irq
     mov sp, r0
     
     @ volta para o modo supervisor     
