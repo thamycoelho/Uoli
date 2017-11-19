@@ -9,7 +9,7 @@ int _start(int argv, char** argc){
 
     motor1.id = 1;
     motor1.speed = 40;
-
+printf:
     set_motors_speed(&motor0, &motor1);
     
     return 0;
