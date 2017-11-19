@@ -132,7 +132,8 @@ SET_TZIC:
     str r0, [r1, #TZIC_INTCTRL]
 
     
-    @ configura o GPIO 
+    @ configura o GPIO
+ 
 SET_GPIO:
     @ Constantes para os enderecos do GPIO
     .set GPIO_DR,  0x53F84000
@@ -267,7 +268,7 @@ set_motors_speed:
     @ coloca em r2 os valores em sequencia dos bits de escrita e as velocidades dos motores
     mov r2, #0
     orr r2, r0, r0, lsl #1
-    orr r2, r1, r1, lsl #7
+    orr r2, r1, r1, lsl #8
     
     @ coloca no GPIO_DR os valores necessarios
     ldr r0, =GPIO_DR
