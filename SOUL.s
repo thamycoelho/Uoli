@@ -153,7 +153,7 @@ SET_GPIO:
     @ TRANSFERE  o fluxo para o codigo do usuario
     .set COD_USER, 0x77812000
     
-    b COD_USER
+    b #COD_USER
    
 IRQ_HANDLE:
     @ Coloca em GPT_SR o valor 0x1
@@ -271,7 +271,8 @@ set_motors_speed:
     @ coloca no GPIO_DR os valores necessarios
     ldr r0, =GPIO_DR
     ldr r1, [r0]
-    bic r1, #SET_MOTORS
+    ldr r3, =SET_MOTORS
+    bic r1, r1, r3
     orr r1, r1, r2, lsl #18
     str r1, [r0]
 
@@ -335,7 +336,8 @@ fim_loop:
     
     ldr r1, =GPIO_PSR
     ldr r0, [r1]
-    mov r2, #0xFFF
+    mov r2, #0xFF, lsl #1
+    add r2, r2, #0xF
     and r0, r0, r2, lsl #6
              
     movs pc, lr
