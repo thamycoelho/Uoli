@@ -343,3 +343,8 @@ fim_loop:
     and r0, r0, r2, lsl #6
              
     movs pc, lr
+
+set_alarm:
+
+
+register_proximity_callback:
