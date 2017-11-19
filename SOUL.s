@@ -153,7 +153,8 @@ SET_GPIO:
     @ TRANSFERE  o fluxo para o codigo do usuario
     .set COD_USER, 0x77812000
     
-    b #COD_USER
+    ldr r0, =COD_USER
+    bx r0
    
 IRQ_HANDLE:
     @ Coloca em GPT_SR o valor 0x1
@@ -336,7 +337,8 @@ fim_loop:
     
     ldr r1, =GPIO_PSR
     ldr r0, [r1]
-    mov r2, #0xFF, lsl #1
+    mov r2, #0xFF
+    mov r2, r2, lsl #1
     add r2, r2, #0xF
     and r0, r0, r2, lsl #6
              
