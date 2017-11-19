@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "api_robot2.h"
 
 
@@ -13,6 +12,6 @@ int main(void){
     motor1.speed = 40;
 
     for(i=0; i<=100;i++){
-        set_motors_speed(motor0, motor1);
+        set_motors_speed(&motor0, &motor1);
     }
 }
