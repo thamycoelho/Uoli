@@ -316,6 +316,7 @@ read_sonar:
 for_time1:
     cmp r3, #200
     bge fim_for_time1
+    add r3, #1
     b for_time1
 fim_for_time1:
 
@@ -329,6 +330,7 @@ fim_for_time1:
 for_time2:
     cmp r3, #200
     bge fim_for_time2
+    add r3, #1
     b for_time2
 fim_for_time2:
 
