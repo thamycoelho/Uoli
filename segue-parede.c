@@ -2,6 +2,7 @@
 
 motor_cfg_t motor0;
 motor_cfg_t motor1;
+unsigned char sonar_id;
 
 int _start(int argv, char** argc){
 
@@ -13,12 +14,11 @@ int _start(int argv, char** argc){
     motor1.id = 1;
 
     motor1.speed = 40;
+    sonar_id = 4;
 
-    set_motors_speed(&motor0, &motor1);
-   
-    motor1.speed = 0;
-   
-    set_motor_speed(&motor1);
+    while(read_sonar(sonar_id) > 1000){
+        set_motors_speed(&motor0, &motor1);
+    }
 
     while(1);
     return 0;

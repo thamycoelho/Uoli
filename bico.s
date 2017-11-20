@@ -1,5 +1,6 @@
 .global set_motor_speed
 .global set_motors_speed
+.global read_sonar
 
 .data 
 
@@ -26,4 +27,11 @@ set_motors_speed:
     mov r7, #19
     svc 0x0
     mov pc, lr
-  
+
+read_sonar:
+    ldrb r1, [r0]
+    mov r0, r1
+    
+    mov r7, #16
+    svc 0x0
+    mov pc,lr

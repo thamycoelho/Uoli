@@ -209,42 +209,30 @@ set_motor_speed:
     .set SET_MOTOR1,    0xFE000000
      
     @ caso a velocidade do motor tenha mais que 6 bits (valor maximo 63), entao retorna com r1 = -2
-    cmp r1, #MAX_SPEED
-    movhi r1, #-2
+    cmp r0, #1
+    movhi r0, #-1
+    movhis pc, lr
+    
+    cmp r1, #63
+    movhi r0, #-2
     movhis pc, lr
 
     @ verifica se vai setar o motor 0
     cmp r0, #0
-    bne motor_2    
 
     mov r2, #0
     orr r2, r2, r1, lsl #1
     ldr r0, =GPIO_DR
     ldr r1, [r0]
-    bic r1, r1, #SET_MOTOR0
-    orr r1, r1, r2, lsl #18
+    biceq r1, r1, #SET_MOTOR0
+    bicne r1, r1, #SET_MOTOR1
+    orreq r1, r1, r2, lsl #18
+    orrne r1, r1, r2, lsl #25
+    str r1, [r0]
     
     mov r0, #0
     movs pc, lr
         
-motor_2:
-    cmp r0, #1
-    bne erro
- 
-    mov r2, #0
-    orr r2, r2, r1, lsl #1
-    ldr r0, =GPIO_DR
-    ldr r1, [r0]
-    bic r1, r1, #SET_MOTOR1
-    orr r1, r1, r2, lsl #25
-  
-    mov r0, #0
-    movs pc, lr
-    
-erro:
-    mov r0, #-1
-    movs pc, lr
-
 @ Define a velocidade dos motores
 @ Parametros:
 @ r0: velocidade para o motor 0
@@ -314,6 +302,7 @@ read_sonar:
     .set SONARES, 0x3E
     
     cmp r0, #15
+    movhi r0, #-1
     movhis pc, lr
     
     ldr r1, =GPIO_DR
@@ -325,13 +314,15 @@ read_sonar:
     
     mov r3, #1
     orr r3, r3, r0, lsl #1
-    str r3, [r1]
+    mov r3, r3, lsl #1
+    orr r2, r2, r3
+    str r2, [r1]
 
 loop:
-    ldr r1, =GPIO_PSR
+
     ldr r2, [r1]
-    and r1, r1, #1
-    cmp r1, #1
+    and r2, r2, #1
+    cmp r2, #1
     beq fim_loop
     b loop
 fim_loop:
