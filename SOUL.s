@@ -268,7 +268,7 @@ set_motors_speed:
     @ coloca em r2 os valores em sequencia dos bits de escrita e as velocidades dos motores
     mov r2, #0
     orr r2, r0, r0, lsl #1
-    orr r2, r1, r1, lsl #8
+    orr r2, r1, r1, lsl #7
     
     @ coloca no GPIO_DR os valores necessarios
     ldr r0, =GPIO_DR
