@@ -312,10 +312,10 @@ read_sonar:
     bic r2, #SONARES 
     str r2, [r1]
 
-    mov r3, =CONTADOR
-    mov r4, [r3]
+    ldr r3, =CONTADOR
+    ldr r4, [r3]
 loop_time1:   
-    mov r5, [r3]
+    ldr r5, [r3]
     sub r5, r5, r4
     cmp r5, #1
     bls loop_time1
@@ -327,10 +327,10 @@ loop_time1:
     orr r2, r2, r3
     str r2, [r1]
 
-    mov r3, =CONTADOR
-    mov r4, [r3]
+    ldr r3, =CONTADOR
+    ldr r4, [r3]
 loop_time2:   
-    mov r5, [r3]
+    ldr r5, [r3]
     sub r5, r5, r4
     cmp r5, #1
     bls loop_time2
