@@ -311,12 +311,29 @@ read_sonar:
     @ zera o trigger
     bic r2, #SONARES 
     str r2, [r1]
-    
+
+    mov r3, =CONTADOR
+    mov r4, [r3]
+loop_time1:   
+    mov r5, [r3]
+    sub r5, r5, r4
+    cmp r5, #1
+    bls loop_time1
+
+    @ coloca 1 no trigger    
     mov r3, #1
     orr r3, r3, r0, lsl #1
     mov r3, r3, lsl #1
     orr r2, r2, r3
     str r2, [r1]
+
+    mov r3, =CONTADOR
+    mov r4, [r3]
+loop_time2:   
+    mov r5, [r3]
+    sub r5, r5, r4
+    cmp r5, #1
+    bls loop_time2
 
 loop:
 
