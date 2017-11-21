@@ -16,7 +16,7 @@ int _start(int argv, char** argc){
     motor1.speed = 40;
     sonar_id = 4;
 
-    while(read_sonar(sonar_id) > 1200){
+    while(read_sonar(sonar_id) > 150){
         set_motors_speed(&motor0, &motor1);
     }
 
