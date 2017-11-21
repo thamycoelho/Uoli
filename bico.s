@@ -29,8 +29,6 @@ set_motors_speed:
     mov pc, lr
 
 read_sonar:
-    ldrb r1, [r0]
-    mov r0, r1
     
     mov r7, #16
     svc 0x0
