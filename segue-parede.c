@@ -9,26 +9,18 @@ int _start(int argv, char** argc){
 int i;
     while(1){
     	motor0.id = 0;
-  	motor0.speed = 40;
-	motor1.id = 1;
+      	motor0.speed = 40;
+    	motor1.id = 1;
     	motor1.speed = 40;
     	sonar_id = 4;
 	
-	set_motors_speed(&motor0, &motor1);
+    	set_motors_speed(&motor0, &motor1);
 	
-	motor0.speed = 0;
-	
-	set_motor_speed(&motor0);
-
-  	motor0.speed = 40;
-	motor1.id = 1;
-    	motor1.speed = 40;
-
-	set_motors_speed(&motor0, &motor1);
-	
-	motor1.speed = 40;
-	
-	set_motor_speed(&motor1);
+    	if(read_sonar(sonar_id) <= 50){
+            motor1.speed = 0;
+            set_motor_speed(&motor1);
+        }
+            
     }
 
     while(1);
