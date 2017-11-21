@@ -10,7 +10,7 @@ int i;
     while(1){
         sonar_valor = read_sonar(sonar_id);
         if(sonar_valor < 20){
-            motor1.speed = 0
+            motor1.speed = 0;
             set_motor_speed(&motor1);
         }
         
