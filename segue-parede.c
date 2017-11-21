@@ -12,13 +12,9 @@ int i;
         sonar_valor = read_sonar(sonar_id);
         if(sonar_valor < 20){
             motor1.speed = 0;
-<<<<<<< HEAD
             motor0.speed = 0;
             set_motors_speed(&motor0,&motor1);
             break;
-=======
-            set_motor_speed(&motor1);
->>>>>>> 213cb370f939fcec52084e212bd2babb8cb73f61
         }
         
         motor0.id = 0;
