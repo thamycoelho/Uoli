@@ -334,6 +334,11 @@ for_time2:
     b for_time2
 fim_for_time2:
 
+    @zera o trigger de novo
+
+    ldr r2, [r1]
+    bic r2, #SONARES 
+    str r2, [r1]
     mov r3, #0
 loop:
 
