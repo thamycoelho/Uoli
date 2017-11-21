@@ -362,11 +362,9 @@ fim_loop:
     mov r2, r2, lsl #1
     add r2, r2, #0xF
     and r0, r0, r2, lsl #6
-    mov r0, r0, lsr #6            
     movs pc, lr
 
 set_alarm:
     ldrb r1, [r0]
-
 
 register_proximity_callback:
