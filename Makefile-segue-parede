@@ -12,13 +12,13 @@ SOUL_OBJS=SOUL.o
 # ----------------------------------
 # Compiling/Assembling/Linking Tools and flags
 AS=arm-eabi-as
-AS_FLAGS=-g
+AS_FLAGS=
 
 CC=arm-eabi-gcc
-CC_FLAGS=-g
+CC_FLAGS=
 
 LD=arm-eabi-ld
-LD_FLAGS=-g
+LD_FLAGS=
 
 USER_PRG=segue-parede.o
 
