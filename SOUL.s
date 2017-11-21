@@ -334,6 +334,7 @@ for_time2:
     b for_time2
 fim_for_time2:
 
+    mov r3, #0
 loop:
 
 for_time3:
