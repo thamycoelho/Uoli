@@ -343,6 +343,7 @@ for_time3:
     b for_time3
 
     ldr r2, [r1]
+and:
     and r2, r2, #1
     cmp r2, #1
     beq fim_loop
