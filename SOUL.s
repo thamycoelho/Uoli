@@ -356,8 +356,8 @@ fim_for_time3:
     b loop
 fim_loop:
     
-    ldr r1, =GPIO_PSR
-    ldr r0, [r1]
+    ldr r1, =GPIO_DR
+    ldr r0, [r1, #GPIO_SR]
     mov r2, #0xFF
     mov r2, r2, lsl #1
     add r2, r2, #0xF
