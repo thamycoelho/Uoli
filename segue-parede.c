@@ -20,7 +20,7 @@ int i;
     	motor1.speed = 40;
     	sonar_id = 4;
 	
-    	set_motor_speed(&motor1);
+    	set_motors_speed(&motor0, &motor1);
 	
 //    	if(read_sonar(sonar_id) <= 50){
   //          motor1.speed = 0;
