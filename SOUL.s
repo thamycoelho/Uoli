@@ -339,12 +339,12 @@ loop:
 
 for_time3:
     cmp r3, #150
-    bge fim_for_time2
+    bge fim_for_time3
     add r3, #1
     b for_time3
+fim_for_time3:
 
     ldr r2, [r1]
-and:
     and r2, r2, #1
     cmp r2, #1
     beq fim_loop
