@@ -300,8 +300,8 @@ set_time:
 
 read_sonar:
     @ mascara para modificar o MUX em GPIO_DR
-    .set SONARES, 0x3E
-    .set LER_SONARES, 0x3FFC0
+    .equ SONARES, 0x3E
+    .equ LER_SONARES, 0x3FFC0
 
     cmp r0, #15
     movhi r0, #-1
