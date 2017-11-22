@@ -310,6 +310,7 @@ read_sonar:
     
     @ zera o trigger
     bic r2, #SONARES 
+    orr r2, r2, r0, lsl #2
     str r2, [r1]
 
     mov r3, #0
@@ -322,11 +323,11 @@ fim_for_time1:
 
     @ coloca 1 no trigger    
     mov r3, #1
-    orr r3, r3, r0, lsl #1
     mov r3, r3, lsl #1
     orr r2, r2, r3
     str r2, [r1]
 
+    mov r3, #0
 for_time2:
     cmp r3, #200
     bge fim_for_time2
@@ -337,7 +338,7 @@ fim_for_time2:
     @zera o trigger de novo
 
     ldr r2, [r1]
-    bic r2, #SONARES 
+    bic r2, #0x2 
     str r2, [r1]
     mov r3, #0
 loop:
