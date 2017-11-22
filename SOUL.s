@@ -363,8 +363,10 @@ fim_loop:
     ldr r1, =GPIO_DR
     ldr r0, [r1, #GPIO_PSR] @ Em r0 tem o conteudo do GPIO_PSR
     ldr r2, =LER_SONARES 
+    ldr r2, [r2]
     and r0, r0, r2
     mov r0, r0, lsr #6
+
     movs pc, lr
 
 set_alarm:
