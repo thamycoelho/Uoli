@@ -301,7 +301,8 @@ set_time:
 read_sonar:
     @ mascara para modificar o MUX em GPIO_DR
     .set SONARES, 0x3E
-    
+    .set LER_SONARES, 0x3FFC0
+
     cmp r0, #15
     movhi r0, #-1
     movhis pc, lr
@@ -360,10 +361,8 @@ fim_loop:
     
     ldr r1, =GPIO_DR
     ldr r0, [r1, #GPIO_PSR]
-    mov r2, #0xFF
-    mov r2, r2, lsl #1
-    add r2, r2, #0xF
-    and r0, r0, r2, lsl #6
+    ldr r2, =LER_SONARES
+    and r0, r0, r2
     mov r0, r0, lsr #6
     movs pc, lr
 
