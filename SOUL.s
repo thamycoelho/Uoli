@@ -181,6 +181,7 @@ SYSCALL_HANDLE:
     @ Definicao da velocidade maxima
     .set MAX_SPEED, 63
 @ Verifica qual a syscall chamada    
+    
     cmp r7, #16
     beq read_sonar
     cmp r7, #17
