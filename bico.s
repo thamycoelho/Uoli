@@ -62,7 +62,7 @@ loop_sonars:
     str r0, [r2]    @ coloca o valor retornado pela syscall no vetor
     add r2, #4      @ vai pra proxima posicao do vetor
     add r3, #1      @ vai pro proximo sonar a ser lido
-    b loop_sonars:
+    b loop_sonars
     
 fim_loop_sonars:
     mov pc, lr
