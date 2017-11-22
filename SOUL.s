@@ -338,11 +338,11 @@ fim_for_time2:
     @zera o trigger de novo
 
     ldr r2, [r1]
-    bic r2, #0x2 
+    bic r2, #2 
     str r2, [r1]
-    mov r3, #0
+    
 loop:
-
+    mov r3, #0
 for_time3:
     cmp r3, #150
     bge fim_for_time3
