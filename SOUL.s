@@ -307,38 +307,37 @@ read_sonar:
     movhi r0, #-1
     movhis pc, lr
     
+    @ r2 contem o conteudo de GPIO_DR
     ldr r1, =GPIO_DR
     ldr r2, [r1]
     
-    @ zera o trigger
+    @ zera o trigger e coloca o id do sonar
     bic r2, #SONARES 
     orr r2, r2, r0, lsl #2
     str r2, [r1]
 
     mov r3, #0
 for_time1:
-    cmp r3, #200
+    cmp r3, #50
     bge fim_for_time1
     add r3, #1
     b for_time1
 fim_for_time1:
 
     @ coloca 1 no trigger    
-    mov r3, #1
-    mov r3, r3, lsl #1
+    mov r3, #2
     orr r2, r2, r3
     str r2, [r1]
 
     mov r3, #0
 for_time2:
-    cmp r3, #200
+    cmp r3, #50
     bge fim_for_time2
     add r3, #1
     b for_time2
 fim_for_time2:
 
     @zera o trigger de novo
-
     ldr r2, [r1]
     bic r2, #2 
     str r2, [r1]
@@ -346,12 +345,13 @@ fim_for_time2:
 loop:
     mov r3, #0
 for_time3:
-    cmp r3, #150
+    cmp r3, #50
     bge fim_for_time3
     add r3, #1
     b for_time3
 fim_for_time3:
 
+    @ verifica se a flag eh 1
     ldr r2, [r1]
     and r2, r2, #1
     cmp r2, #1
@@ -359,9 +359,10 @@ fim_for_time3:
     b loop
 fim_loop:
     
+    @ Le a distamcia do sonar
     ldr r1, =GPIO_DR
-    ldr r0, [r1, #GPIO_PSR]
-    ldr r2, =LER_SONARES
+    ldr r0, [r1, #GPIO_PSR] @ Em r0 tem o conteudo do GPIO_PSR
+    ldr r2, =LER_SONARES 
     and r0, r0, r2
     mov r0, r0, lsr #6
     movs pc, lr
