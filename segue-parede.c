@@ -6,10 +6,10 @@ unsigned char sonar_id;
 unsigned short sonar_valor;
 
 int _start(int argv, char** argc){
-//int i;
-  //  sonar_id = 4;
-    //while(1){
-      //  sonar_valor = read_sonar(sonar_id);
+    int i;
+    sonar_id = 4;
+    while(1){
+        sonar_valor = read_sonar(sonar_id);
         //if(sonar_valor < 20){
           //  motor1.speed = 0;
             //motor0.speed = 0;
@@ -27,7 +27,7 @@ int _start(int argv, char** argc){
 //    	if(read_sonar(sonar_id) <= 50){
   //          motor1.speed = 0;
     //        set_motor_speed(&motor1);
-      //  }
+        }
             
    // }
 
