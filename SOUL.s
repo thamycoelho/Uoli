@@ -207,8 +207,8 @@ IRQ_HANDLE:
 SYSCALL_HANDLE:
     @ Definicao da velocidade maxima
     .equ MAX_SPEED, 63
-    .equ MAX_CALLBACKS, 8
-    .equ MAX_ALARMS, 8
+    .equ MAX_CALLBACK, 8
+    .equ MAX_ALARM, 8
     @ Verifica qual a syscall chamada    
     
     cmp r7, #16
