@@ -92,12 +92,12 @@ add_alarm:
 @ Chama a syscall get_time
 get_time:
     push {r4-r11, lr}
-    mov r1, r0
+    mov r8, r0
     
     mov r7, #20
     svc 0x0
 
-    str r0, [r1]
+    str r0, [r8]
     pop {r4-r11, lr}
     mov pc, lr
 
