@@ -168,7 +168,7 @@ SET_GPIO:
     bx r0
    
 IRQ_HANDLE:
-    push {lr}
+    push {r0-r11,lr}
     
     @ Coloca em GPT_SR o valor 0x1
     LDR r0, =GPT_SR
@@ -186,7 +186,7 @@ IRQ_HANDLE:
     sub r0, #4
     str r0, [lr]
     
-    pop {lr}
+    pop {r0-r11,lr}
     movs pc, lr 
 
 @ Tratamento das Syscalls
