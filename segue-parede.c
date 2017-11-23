@@ -18,7 +18,7 @@ int _start(int argv, char** argc){
     //set_motors_speed(&motor0, &motor1);
 
     while(1){
-
+        set_time(3);
         get_time(&time);
 
         for (i=0; i<100; i++){
