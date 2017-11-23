@@ -9,7 +9,10 @@ unsigned short sonar_valor2;
 unsigned int time;
 int i;
 
-void *vira_uoli();
+void *vira_uoli(){
+
+
+}
 
 int _start(int argv, char** argc){
 
