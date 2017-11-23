@@ -7,8 +7,9 @@ unsigned short sonar_valor;
 unsigned short sonar_valor1;
 unsigned short sonar_valor2;
 unsigned int time;
+int i;
+
 int _start(int argv, char** argc){
-    int i;
 
    // sonar_id = 4;
    // motor0.id = 0;
