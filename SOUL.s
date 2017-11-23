@@ -1,7 +1,7 @@
 .data 
 @ Alocando espaco para o contador
 CONTADOR:
-    .skip 4
+    .word 0x0
 
 @ Alocando um espaco para a pilha de IRQ
 pilha_IRQ:
@@ -21,7 +21,7 @@ sp_user:
 .section .iv, "a"
 
     @ Definicao do TIME_SZ
-    .set TIME_SZ, 100
+    .equ TIME_SZ, 100
 
     @ flag para desabilitar interrupcao nos modos FIQ e IRQ 
     .equ I_IRQ, 0x40
@@ -90,7 +90,7 @@ RESET_HANDLER:
     str r0, [r1]
 
     @colocando em GPT_OCR1 o valor que desejo contar (no caso 100)
-    mov r0, #TIME_SZ
+    ldr r0, =TIME_SZ
     ldr r1, =GPT_OCR1
     str r0, [r1]
 
