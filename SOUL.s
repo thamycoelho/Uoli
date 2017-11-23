@@ -140,9 +140,6 @@ SET_TZIC:
 
     ldr sp, =sp_SUPER
 
-laco:
-    b laco
-    
     @ configura o GPIO
  
 SET_GPIO:
@@ -160,7 +157,10 @@ SET_GPIO:
     str r1,[r0, #GPIO_GDIR]
       
     @instrucao msr - habilita interrupcoes
-    msr  CPSR_c, #0x10       @ USER mode
+    mov r0, #0x10
+    bic r0, r0, 0x80
+
+    msr  cpsr, r0       @ USER mode
  
     @ TRANSFERE  o fluxo para o codigo do usuario
     .set COD_USER, 0x77812000
