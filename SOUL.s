@@ -27,8 +27,12 @@ callback_function_vector:
 qtd_callback:
     .word 0x0
 
-alarm_vector:
-    .space 64
+qtd_alarm:
+    .word 0x0
+alarm_function_vector:
+    .space 32
+alarm_time_vector:
+    .space 32
 
 .text
 
@@ -202,7 +206,7 @@ callback:
     mov r2, #0
 percorre_vetor:
     cmp r2, r1
-    bge fim_percorre_vetor
+    bhs fim_percorre_vetor
     mov r3, r2, lsl #2
     ldr r4, =callback_sonar_vector
     ldr r0, [r4, r3]
@@ -387,7 +391,7 @@ read_sonar:
     mov r3, #0
 for_time1:
     cmp r3, #50
-    bge fim_for_time1
+    bhs fim_for_time1
     add r3, #1
     b for_time1
 fim_for_time1:
@@ -400,7 +404,7 @@ fim_for_time1:
     mov r3, #0
 for_time2:
     cmp r3, #50
-    bge fim_for_time2
+    bhs fim_for_time2
     add r3, #1
     b for_time2
 fim_for_time2:
@@ -414,7 +418,7 @@ loop:
     mov r3, #0
 for_time3:
     cmp r3, #50
-    bge fim_for_time3
+    bhs fim_for_time3
     add r3, #1
     b for_time3
 fim_for_time3:
@@ -439,7 +443,36 @@ fim_read_sonar:
     movs pc, lr
 
 set_alarm:
-    ldrb r1, [r0]
+    push {r4-r11, lr}
+    ldr r2, =qtd_alarm
+    ldr r3, [r2]
+    cmp r3, #MAX_ALARM
+    movhs r0, #-1
+    bhs fim_alarm
+    
+    ldr r2, =CONTADOR
+    ldr r3, [r2]
+    cmp r1, r3
+    movlo r0, #-2
+    blo fim_alarm
+    
+    ldr r2, =qtd_alarm
+    ldr r3, [r2]
+    mov r3, r3, lsl #2
+    ldr r2, =alarm_time_vector
+    str r1, [r2, r3]
+    ldr r2, =alarm_function_vector
+    str r0, [r2, r3]
+    
+
+    ldr r2, =qtd_alarm
+    ldr r3,[r2]
+    add r3, #1
+    str r3, [r2]
+fim_alarm:
+    pop {r4-r11, lr}
+    movs pc, lr
+    
 
 register_proximity_callback:
     push {r1-r11, lr}
@@ -449,8 +482,8 @@ register_proximity_callback:
     ldr r3, =qtd_callback
     ldr r4, [r3]
     cmp r4, #MAX_CALLBACK
-    movhi r0, #-1
-    bhi callback_fim
+    movhs r0, #-1
+    bhs callback_fim
 
     ldr r3, =qtd_callback
     ldr r4, [r3]
