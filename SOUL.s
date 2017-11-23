@@ -158,7 +158,7 @@ SET_GPIO:
       
     @instrucao msr - habilita interrupcoes
     mov r0, #0x10
-    bic r0, r0, 0x80
+    bic r0, r0, #0x80
 
     msr  cpsr, r0       @ USER mode
  
