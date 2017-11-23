@@ -4,6 +4,8 @@ motor_cfg_t motor0;
 motor_cfg_t motor1;
 unsigned char sonar_id;
 unsigned short sonar_valor;
+unsigned short sonar_valor1;
+unsigned short sonar_valor2;
 
 int _start(int argv, char** argc){
     int i;
@@ -16,7 +18,10 @@ int _start(int argv, char** argc){
     set_motors_speed(&motor0, &motor1);
 
     while(1){
-        sonar_valor = read_sonar(sonar_id);
+        sonar_valor1 = read_sonar(sonar_id);
+        sonar_valor2 = read_sonar(sonar_id);
+        sonar_valor = sonar_valor1 > sonar_valor2 ? sonar_valor1 : sonar_valor2;
+
         if(sonar_valor <= 800){
             motor1.speed = 0;
             motor0.speed = 0;
