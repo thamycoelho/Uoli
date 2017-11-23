@@ -15,6 +15,21 @@ sp_SUPER:
 pilha_user:
     .skip 300
 sp_user:
+
+@ Alocando espaco para o vetor de callbacks
+callback_sonar_vector:
+    .space 32
+callback_distance_vector:
+    .space 32
+callback_function_vector:
+    .space 32
+
+qtd_callback:
+    .word 0x0
+
+alarm_vector:
+    .space 64
+
 .text
 
 .org 0x0
@@ -85,7 +100,7 @@ RESET_HANDLER:
     str r0, [r1]
 
     @colocando em GPT_OCR1 o valor que desejo contar (no caso 100)
-    mov r0, #100
+    mov r0, #TIME_SZ
     ldr r1, =GPT_OCR1
     str r0, [r1]
 
@@ -136,7 +151,7 @@ SET_TZIC:
     str r0, [r1, #TZIC_INTCTRL]
 
     @ volta para o modo supervisor     
-    msr CPSR_c, #0x13
+    msr CPSR, #0x13
 
     ldr sp, =sp_SUPER
 
@@ -191,8 +206,9 @@ IRQ_HANDLE:
 @ Tratamento das Syscalls
 SYSCALL_HANDLE:
     @ Definicao da velocidade maxima
-    .set MAX_SPEED, 63
-    
+    .equ MAX_SPEED, 63
+    .equ MAX_CALLBACKS, 8
+    .equ MAX_ALARMS, 8
     @ Verifica qual a syscall chamada    
     
     cmp r7, #16
@@ -218,7 +234,7 @@ SYSCALL_HANDLE:
 @ r0: -1 caso o identificador do motor seja invalido, -2 caso a velocidade seja invalida, 0 caso aplicou a velocidade
     
 set_motor_speed:
-    push {r4-r11}
+    push {r4-r11, lr}
     @ Mascara para pegar a velocidade do motor e setar o motor_write
     .set SET_MOTOR0,    0x01FC0000
     .set SET_MOTOR1,    0xFE000000
@@ -226,16 +242,12 @@ set_motor_speed:
     @ caso a velocidade do motor tenha mais que 6 bits (valor maximo 63), entao retorna com r1 = -2
     cmp r0, #1
     movhi r0, #-1
-    pop {r4-r11}
-    movhis pc, lr
-    push {r4-r11}
+    bhi fim_set_motor_speed
     
     cmp r1, #63
     movhi r0, #-2
-    pop {r4-r11}
-    movhis pc, lr
-    
-    push {r4-r11}
+    bhi fim_set_motor_speed
+
     @ verifica se vai setar o motor 0
     cmp r0, #0
 
@@ -250,7 +262,9 @@ set_motor_speed:
     str r1, [r0]
     
     mov r0, #0
-    pop {r4-r11}
+    
+fim_set_motor_speed:    
+    pop {r4-r11, lr}
     movs pc, lr
         
 @ Define a velocidade dos motores
@@ -261,21 +275,18 @@ set_motor_speed:
 @ r0: -1 caso a velocidade do motor 0 seja invalida, -2 caso a velocidade do motor 1 seja invalida, 0 caso definiu as velocidades
 
 set_motors_speed:
-    push {r4-r11}
+    push {r4-r11, lr}
     @ Mascara para aplicar a velocidade dos motores
     .set SET_MOTORS, 0xFFFC0000
 
     @ Verifica se a velocidade eh maior que a maxima permitida
     cmp r0, #MAX_SPEED
     movhi r0, #-1
-    movhis pc, lr
+    bhi fim_set_motors_speed
     cmp r1, #MAX_SPEED
     movhi r0, #-2
+    bhi fim_set_motors_speed
     
-    pop {r4-r11}
-    movhis pc, lr
-    push {r4-r11}
-
     @ coloca em r2 os valores em sequencia dos bits de escrita e as velocidades dos motores
     mov r2, #0
     orr r2, r0, r0, lsl #1
@@ -291,7 +302,8 @@ set_motors_speed:
 
     @ retorna para o codigo do usuario
     mov r0, #0
-    pop {r4-r11}
+fim_set_motors_speed:
+    pop {r4-r11, lr}
     movs pc, lr
    
 @ Funcao retorna o tempo do sistema
@@ -299,12 +311,12 @@ set_motors_speed:
 @ r0: tempo do sistema
 
 get_time:
-    push {r4-r11}
+    push {r4-r11, lr}
     ldr r0, =CONTADOR
     ldr r1, [r0]
     mov r0, r1
     
-    pop {r4-r11}
+    pop {r4-r11, lr}
     movs pc, lr
 
 @ Funcao define um tempo para o sistema
@@ -312,11 +324,11 @@ get_time:
 @ r0: tempo do sistema
 
 set_time:
-    push {r4-r11}
+    push {r4-r11, lr}
     ldr r1, =CONTADOR
     str r0, [r1]
 
-    pop {r4-r11}
+    pop {r4-r11, lr}
     movs pc, lr
 
 @ Funcao le o dado do sonar 
@@ -326,7 +338,7 @@ set_time:
 @ r0: -1 caso o identificador do sonar seja invalido, valor lido no sonar caso seja um sonar valido
 
 read_sonar:
-    push {r4-r11}
+    push {r4-r11, lr}
     
     @ mascara para modificar o MUX em GPIO_DR
     .equ SONARES, 0x3E
@@ -334,10 +346,7 @@ read_sonar:
 
     cmp r0, #15
     movhi r0, #-1
-    pop {r4 - r11}
-    movhis pc, lr
-    
-    push {r4-r11}
+    bhi fim_read_sonar 
     @ r2 contem o conteudo de GPIO_DR
     ldr r1, =GPIO_DR
     ldr r2, [r1]
@@ -397,10 +406,39 @@ fim_loop:
     and r0, r0, r2
     mov r0, r0, lsr #6
 
-    pop {r4 - r11}
+fim_read_sonar:
+    pop {r4 - r11, lr}
     movs pc, lr
 
 set_alarm:
     ldrb r1, [r0]
 
 register_proximity_callback:
+    push {r1-r11, lr}
+    cmp r0, #15
+    movhi r0, #-2
+    bhi callback_fim
+    ldr r3, =qtd_callback
+    ldr r4, [r3]
+    cmp r4, #MAX_CALLBACK
+    movhi r0, #-1
+    bhi callback_fim
+
+    ldr r3, =qtd_callback
+    ldr r4, [r3]
+    mov r4, r4, lsl #2
+    ldr r3, =callback_sonar_vector
+    str r0, [r3, r4]
+    ldr r3, =callback_distance_vector
+    str r1, [r3, r4]
+    ldr r3, =callback_function_vector
+    str r3, [r3, r4]
+
+    ldr r3, =qtd_callback
+    ldr r4, [r3]
+    add r4, #1
+    str r4, [r3]
+    
+callback_fim:
+    pop {r1-r11, lr}
+    movs pc, lr

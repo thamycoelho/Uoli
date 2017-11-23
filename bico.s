@@ -76,8 +76,9 @@ fim_loop_sonars:
 @ Chama a syscall register_proximity_callback
 register_proximity_callback:
     push {r4-r11, lr}
-
-
+    
+    mov r7, #17
+    svc 0x0
     
     pop {r4-r11, lr}
     mov pc,lr
