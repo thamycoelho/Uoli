@@ -74,11 +74,6 @@ RESET_HANDLER:
     ldr r0, =sp_irq
     mov sp, r0
     
-    @ volta para o modo supervisor     
-    msr CPSR_c, MODO_SUPER_INTERRUPTION
-
-    ldr sp, =sp_SUPER
-    
     @habilita o clock_src no GPT
     ldr r0, =GPT_CR
     mov r1, #0x41
@@ -140,6 +135,10 @@ SET_TZIC:
     mov r0, #1
     str r0, [r1, #TZIC_INTCTRL]
 
+    @ volta para o modo supervisor     
+    msr CPSR_c, #0x13
+
+    ldr sp, =sp_SUPER
     
     @ configura o GPIO
  
