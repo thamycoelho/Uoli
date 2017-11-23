@@ -158,6 +158,8 @@ SET_GPIO:
     bx r0
    
 IRQ_HANDLE:
+    push {spsr, lr}
+    
     @ Coloca em GPT_SR o valor 0x1
     LDR r0, =GPT_SR
     mov r1, #0x1
@@ -173,7 +175,8 @@ IRQ_HANDLE:
     ldr r0, [lr]
     sub r0, #4
     str r0, [lr]
-
+    
+    pop {spsr, lr}
     movs pc, lr 
 
 @ Tratamento das Syscalls
@@ -205,6 +208,7 @@ SYSCALL_HANDLE:
 @ r0: -1 caso o identificador do motor seja invalido, -2 caso a velocidade seja invalida, 0 caso aplicou a velocidade
     
 set_motor_speed:
+    push {r4-r11}
     @ Mascara para pegar a velocidade do motor e setar o motor_write
     .set SET_MOTOR0,    0x01FC0000
     .set SET_MOTOR1,    0xFE000000
@@ -212,12 +216,16 @@ set_motor_speed:
     @ caso a velocidade do motor tenha mais que 6 bits (valor maximo 63), entao retorna com r1 = -2
     cmp r0, #1
     movhi r0, #-1
+    pop {r4-r11}
     movhis pc, lr
+    push {r4-r11}
     
     cmp r1, #63
     movhi r0, #-2
+    pop {r4-r11}
     movhis pc, lr
-
+    
+    push {r4-r11}}
     @ verifica se vai setar o motor 0
     cmp r0, #0
 
@@ -232,6 +240,7 @@ set_motor_speed:
     str r1, [r0]
     
     mov r0, #0
+    pop {r4-r11}
     movs pc, lr
         
 @ Define a velocidade dos motores
@@ -242,7 +251,7 @@ set_motor_speed:
 @ r0: -1 caso a velocidade do motor 0 seja invalida, -2 caso a velocidade do motor 1 seja invalida, 0 caso definiu as velocidades
 
 set_motors_speed:
-
+    push {r4-r11}
     @ Mascara para aplicar a velocidade dos motores
     .set SET_MOTORS, 0xFFFC0000
 
@@ -252,7 +261,10 @@ set_motors_speed:
     movhis pc, lr
     cmp r1, #MAX_SPEED
     movhi r0, #-2
+    
+    pop {r4-r11}
     movhis pc, lr
+    push{r4-r11}
 
     @ coloca em r2 os valores em sequencia dos bits de escrita e as velocidades dos motores
     mov r2, #0
@@ -269,6 +281,7 @@ set_motors_speed:
 
     @ retorna para o codigo do usuario
     mov r0, #0
+    pop {r4-r11}
     movs pc, lr
    
 @ Funcao retorna o tempo do sistema
@@ -276,10 +289,11 @@ set_motors_speed:
 @ r0: tempo do sistema
 
 get_time:
-
+    push {r4-r11}
     ldr r0, =CONTADOR
     ldr r0, [r0]
     
+    pop {r4-r11}
     movs pc, lr
 
 @ Funcao define um tempo para o sistema
@@ -287,9 +301,11 @@ get_time:
 @ r0: tempo do sistema
 
 set_time:
+    push {r4-r11}
     ldr r1, =CONTADOR
     str r0, [r1]
 
+    pop {r4-r11}
     movs pc, lr
 
 @ Funcao le o dado do sonar 
@@ -299,14 +315,18 @@ set_time:
 @ r0: -1 caso o identificador do sonar seja invalido, valor lido no sonar caso seja um sonar valido
 
 read_sonar:
+    push {r4-r11}
+    
     @ mascara para modificar o MUX em GPIO_DR
     .equ SONARES, 0x3E
     .equ LER_SONARES, 0x3FFC0
 
     cmp r0, #15
     movhi r0, #-1
+    pop {r4 - r11}
     movhis pc, lr
     
+    push {r4-r11}
     @ r2 contem o conteudo de GPIO_DR
     ldr r1, =GPIO_DR
     ldr r2, [r1]
@@ -366,6 +386,7 @@ fim_loop:
     and r0, r0, r2
     mov r0, r0, lsr #6
 
+    pop {r4 - r11}
     movs pc, lr
 
 set_alarm:
