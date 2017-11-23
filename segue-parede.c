@@ -19,15 +19,15 @@ int _start(int argv, char** argc){
 
     while(1){
         sonar_valor1 = read_sonar(sonar_id);
-        sonar_valor2 = read_sonar(sonar_id);
-        sonar_valor = sonar_valor1 > sonar_valor2 ? sonar_valor1 : sonar_valor2;
+       // sonar_valor2 = read_sonar(sonar_id);
+        //sonar_valor = sonar_valor1 > sonar_valor2 ? sonar_valor1 : sonar_valor2;
 
-        if(sonar_valor <= 800){
-            motor1.speed = 0;
-            motor0.speed = 0;
-            set_motors_speed(&motor0,&motor1);
-            break;
-        }
+      //  if(sonar_valor <= 800){
+        //    motor1.speed = 0;
+          //  motor0.speed = 0;
+           // set_motors_speed(&motor0,&motor1);
+           // break;
+       // }
     }
 
     while(1);
