@@ -216,9 +216,9 @@ percorre_vetor:
     cmp r0, r5
     ldrls r4, =callback_function_vector
     ldrls r5, [r4, r3]
-    push{r1-r11, lr}
+    push {r1-r11,lr}
     blxls r5
-    pop{r1-r11, lr}
+    pop {r1-r11,lr}
     add r2, #1
     b percorre_vetor
 fim_percorre_vetor: 
