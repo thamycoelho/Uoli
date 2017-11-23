@@ -225,7 +225,7 @@ set_motor_speed:
     pop {r4-r11}
     movhis pc, lr
     
-    push {r4-r11}}
+    push {r4-r11}
     @ verifica se vai setar o motor 0
     cmp r0, #0
 
@@ -264,7 +264,7 @@ set_motors_speed:
     
     pop {r4-r11}
     movhis pc, lr
-    push{r4-r11}
+    push {r4-r11}
 
     @ coloca em r2 os valores em sequencia dos bits de escrita e as velocidades dos motores
     mov r2, #0
