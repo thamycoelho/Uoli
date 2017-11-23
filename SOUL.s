@@ -193,7 +193,8 @@ IRQ_HANDLE:
 SYSCALL_HANDLE:
     @ Definicao da velocidade maxima
     .set MAX_SPEED, 63
-@ Verifica qual a syscall chamada    
+    
+    @ Verifica qual a syscall chamada    
     
     cmp r7, #16
     beq read_sonar
@@ -301,7 +302,8 @@ set_motors_speed:
 get_time:
     push {r4-r11}
     ldr r0, =CONTADOR
-    ldr r0, [r0]
+    ldr r1, [r0]
+    mov r0, r1
     
     pop {r4-r11}
     movs pc, lr
