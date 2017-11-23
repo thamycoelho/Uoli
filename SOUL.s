@@ -7,7 +7,14 @@ CONTADOR:
 pilha_IRQ:
     .skip 64
 sp_irq:
-
+  
+pilha_super:
+    .skip 100
+sp_SUPER:
+    
+pilha_user:
+    .skip 300
+sp_user:
 .text
 
 .org 0x0
@@ -70,6 +77,8 @@ RESET_HANDLER:
     @ volta para o modo supervisor     
     msr CPSR_c, MODO_SUPER_INTERRUPTION
 
+    ldr sp, =sp_SUPER
+    
     @habilita o clock_src no GPT
     ldr r0, =GPT_CR
     mov r1, #0x41
@@ -154,6 +163,7 @@ SET_GPIO:
     @ TRANSFERE  o fluxo para o codigo do usuario
     .set COD_USER, 0x77812000
     
+    ldr sp, =sp_user
     ldr r0, =COD_USER
     bx r0
    
