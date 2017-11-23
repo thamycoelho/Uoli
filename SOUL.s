@@ -90,7 +90,7 @@ RESET_HANDLER:
     str r0, [r1]
 
     @colocando em GPT_OCR1 o valor que desejo contar (no caso 100)
-    ldr r0, =TIME_SZ
+    mov r0, #100
     ldr r1, =GPT_OCR1
     str r0, [r1]
 
