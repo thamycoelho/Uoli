@@ -195,6 +195,34 @@ IRQ_HANDLE:
     add r1, #1
     str r1, [r0]
 
+callback:
+    @ Percorre o vetor de callbacks
+    ldr r0, =qtd_callback
+    ldr r1, [r0]
+    mov r2, #0
+percorre_vetor:
+    cmp r2, r1
+    bge fim_percorre_vetor
+    mov r3, r2, lsl #2
+    ldr r4, =callback_sonar_vector
+    ldr r0, [r4, r3]
+    
+    mov r7, #16
+    svc 0x0
+    
+    ldr r4, =callback_distance_vector
+    ldr r5, [r4, r3]
+    
+    cmp r0, r5
+    ldrls r4, =callback_function_vector
+    ldrls r5, [r4, r3]
+    push{r1-r11, lr}
+    blxls r5
+    pop{r1-r11, lr}
+    add r2, #1
+    b percorre_vetor
+fim_percorre_vetor: 
+   
     pop {r0-r11,lr}
     push {r0-r11}
     @ Subtraindo em 4 unidades o LR
