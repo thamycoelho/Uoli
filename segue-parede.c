@@ -18,8 +18,13 @@ int _start(int argv, char** argc){
     //set_motors_speed(&motor0, &motor1);
 
     while(1){
+
         get_time(&time);
-     //   sonar_valor1 = read_sonar(sonar_id);
+
+        for (i=0; i<100; i++){
+
+         }
+       //   sonar_valor1 = read_sonar(sonar_id);
        // sonar_valor2 = read_sonar(sonar_id);
         //sonar_valor = sonar_valor1 > sonar_valor2 ? sonar_valor1 : sonar_valor2;
 
