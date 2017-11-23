@@ -139,6 +139,9 @@ SET_TZIC:
     msr CPSR_c, #0x13
 
     ldr sp, =sp_SUPER
+
+laco:
+    b laco
     
     @ configura o GPIO
  
