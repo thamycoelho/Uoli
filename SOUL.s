@@ -193,20 +193,15 @@ IRQ_HANDLE:
     mov r1, #0x1
     str r1, [r0]
 
-    @ Incrementando o contador em uma unidade
-    ldr r0, =CONTADOR
-    ldr r1, [r0]
-    add r1, #1
-    str r1, [r0]
 
 callback:
     @ Percorre o vetor de callbacks
     ldr r0, =qtd_callback
     ldr r1, [r0]
     mov r2, #0
-percorre_vetor:
+percorre_vetor_callback:
     cmp r2, r1
-    bhs fim_percorre_vetor
+    bhs fim_percorre_vetor_callback
     mov r3, r2, lsl #2
     ldr r4, =callback_sonar_vector
     ldr r0, [r4, r3]
@@ -224,9 +219,45 @@ percorre_vetor:
     blxls r5
     pop {r1-r11,lr}
     add r2, #1
-    b percorre_vetor
-fim_percorre_vetor: 
-   
+    b percorre_vetor_callback
+fim_percorre_vetor_callback: 
+
+@ Rotinha do alarm
+alarm:
+    @ em r1 tem a quantidade de alarms adicionados e em r2 o i do loop
+    ldr r0, =qtd_alarm
+    ldr r1, [r0]
+    mov r2, #0
+
+@ Percorre os vetores de alarm comparando o tempo do sistema e executando a fução casoesteja no tempon
+percorre_vetor_alarm:
+    cmp r2, r1
+    bhs fim_perccore_vetor_alarm
+    mov r3, r2, lsl #2
+    ldr r4, =alarm_time_vector
+    ldr r5, [r4, r3]
+    
+    @ Chama syscall get_time    
+    mov r7, #20
+    svc 0x0
+
+    cmp r0, r5
+    ldreq r4, =alarm_function_vector
+    ldreq r5, [r5, r3]
+    push {r1-r11, lr}
+    blxeq r5
+    pop {r1- r11, lr}
+    add r2, #1 
+    b percorre_vetor_alarm
+fim_perccore_vetor_alarm:
+
+    
+    @ Incrementando o contador em uma unidade
+    ldr r0, =CONTADOR
+    ldr r1, [r0]
+    add r1, #1
+    str r1, [r0]
+    
     pop {r0-r11,lr}
     push {r0-r11}
     @ Subtraindo em 4 unidades o LR
@@ -235,6 +266,7 @@ fim_percorre_vetor:
     pop {r0-r11}
     movs pc, lr 
 
+    
 @ Tratamento das Syscalls
 SYSCALL_HANDLE:
     @ Definicao da velocidade maxima
