@@ -161,7 +161,6 @@ IRQ_HANDLE:
     mov r1, #0x1
     str r1, [r0]
 
-
 callback:
     @ Percorre o vetor de callbacks
     ldr r0, =qtd_callback
@@ -235,11 +234,17 @@ fim_perccore_vetor_alarm:
     
 @ Tratamento das Syscalls
 SYSCALL_HANDLE:
+    mrs r11, SPSR
+    push {r11}
+
+    msr CPSR, 0x13
+
+    pop {r11}
+    msr SPSR, r11
+    
     push {r1-r12, lr}
     mrs r12, SPSR
     push {r12}
-    
-    msr CPSR, 0x13
     
     @ Definicao da velocidade maxima
     .equ MAX_SPEED, 63
