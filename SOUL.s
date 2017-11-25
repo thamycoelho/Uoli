@@ -235,11 +235,11 @@ fim_perccore_vetor_alarm:
     
 @ Tratamento das Syscalls
 SYSCALL_HANDLE:
+    msr CPSR, 0x13
+    
     push {r1-r12, lr}
     mrs r12, SPSR
     push {r12}
-    
-    msr CPSR, 0x13
     
     @ Definicao da velocidade maxima
     .equ MAX_SPEED, 63
