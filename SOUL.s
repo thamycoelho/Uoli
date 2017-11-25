@@ -53,9 +53,6 @@ RESET_HANDLER:
     ldr r0, =interrupt_vector
     mcr p15, 0, r0, c12, c0, 0
 
-    msr  CPSR,  MODO_IRQ  @IRQ mode sem interrupcoes 
-    ldr r0, =sp_irq
-    mov sp, r0
     
     @habilita o clock_src no GPT
     ldr r0, =GPT_CR
@@ -118,8 +115,12 @@ SET_TZIC:
     mov r0, #1
     str r0, [r1, #TZIC_INTCTRL]
 
+    msr  CPSR,  MODO_IRQ  @IRQ mode sem interrupcoes 
+    ldr r0, =sp_irq
+    mov sp, r0
+   
     @ volta para o modo supervisor     
-    msr CPSR, #0x13
+    msr CPSR_c, #0x13
 
     ldr sp, =sp_SUPER
 
@@ -145,7 +146,6 @@ SET_GPIO:
     @ TRANSFERE  o fluxo para o codigo do usuario
     .set COD_USER, 0x77812000
     
-    ldr sp, =sp_user
     ldr r0, =COD_USER
     bx r0
    

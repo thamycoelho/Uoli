@@ -21,7 +21,13 @@ int _start(int argv, char** argc){
     motor1.speed = 40;
     set_motors_speed(&motor0, &motor1);
     */
-    register_proximity_callback(sonar_id, 500, vira_uoli);
+
+    while(1){
+        get_time(&time);
+
+        for(i=0; i<100; i++);
+    }
+   // register_proximity_callback(sonar_id, 500, vira_uoli);
 
     while(1);
     return 0;
