@@ -150,7 +150,11 @@ SET_GPIO:
     bx r0
    
 IRQ_HANDLE:
-    push {r0-r11,lr}
+    push {r0-r12,lr}
+    
+    @ Salvando o SPSR na pilha
+    mrs r0, SPSR
+    push {r0}
     
     @ Coloca em GPT_SR o valor 0x1
     ldr r0, =GPT_SR
@@ -222,12 +226,11 @@ fim_perccore_vetor_alarm:
     add r1, #1
     str r1, [r0]
     
+    pop {r0}
+    msr SPSR, r0
     pop {r0-r11,lr}
-    push {r0-r11}
     @ Subtraindo em 4 unidades o LR
     sub lr, #4
-    
-    pop {r0-r11}
     movs pc, lr 
 
     
