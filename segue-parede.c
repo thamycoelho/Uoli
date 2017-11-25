@@ -14,21 +14,23 @@ void *vira_uoli();
 int _start(int argv, char** argc){
 
     sonar_id = 4;
-    /*
     motor0.id = 0;
     motor0.speed = 40;
     motor1.id = 1;
     motor1.speed = 40;
     set_motors_speed(&motor0, &motor1);
-    */
 
     while(1){
-        get_time(&time);
+        if(read_sonar(sonar_id)<= 1200){
+            motor0.speed = 0;
+            set_motor_speed(&motor0);
+            break;
+        }
+       // get_time(&time);
 
-        for(i=0; i<100; i++);
     }
    // register_proximity_callback(sonar_id, 500, vira_uoli);
-
+    
     while(1);
     return 0;
 }
