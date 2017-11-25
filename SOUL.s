@@ -1,41 +1,3 @@
-.data 
-@ Alocando espaco para o contador
-CONTADOR:
-    .word 0x0
-
-@ Alocando um espaco para a pilha de IRQ
-pilha_IRQ:
-    .skip 64
-sp_irq:
-  
-pilha_super:
-    .skip 100
-sp_SUPER:
-    
-pilha_user:
-    .skip 300
-sp_user:
-
-@ Alocando espaco para o vetor de callbacks
-callback_sonar_vector:
-    .space 32
-callback_distance_vector:
-    .space 32
-callback_function_vector:
-    .space 32
-
-qtd_callback:
-    .word 0x0
-
-qtd_alarm:
-    .word 0x0
-alarm_function_vector:
-    .space 32
-alarm_time_vector:
-    .space 32
-
-.text
-
 .org 0x0
 .section .iv, "a"
 
@@ -77,6 +39,8 @@ interrupt_vector:
     b IRQ_HANDLE
 
 .org 0x100 
+
+.text
 
 RESET_HANDLER:
     
@@ -243,7 +207,7 @@ percorre_vetor_alarm:
 
     cmp r0, r5
     ldreq r4, =alarm_function_vector
-    ldreq r5, [r5, r3]
+    ldreq r5, [r4, r3]
     push {r1-r11, lr}
     blxeq r5
     pop {r1- r11, lr}
@@ -535,3 +499,39 @@ register_proximity_callback:
 callback_fim:
     pop {r1-r11, lr}
     movs pc, lr
+
+.data 
+@ Alocando espaco para o contador
+CONTADOR:
+    .word 0x0
+
+@ Alocando um espaco para a pilha de IRQ
+pilha_IRQ:
+    .skip 64
+sp_irq:
+  
+pilha_super:
+    .skip 100
+sp_SUPER:
+    
+pilha_user:
+    .skip 300
+sp_user:
+
+@ Alocando espaco para o vetor de callbacks
+callback_sonar_vector:
+    .space 32
+callback_distance_vector:
+    .space 32
+callback_function_vector:
+    .space 32
+
+qtd_callback:
+    .word 0x0
+
+qtd_alarm:
+    .word 0x0
+alarm_function_vector:
+    .space 32
+alarm_time_vector:
+    .space 32
