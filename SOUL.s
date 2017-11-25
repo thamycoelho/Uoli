@@ -149,7 +149,7 @@ SET_GPIO:
     @ TRANSFERE  o fluxo para o codigo do usuario
     .set COD_USER, 0x77812000
     
-    ldr sp, =sp_user
+    @ldr sp, =sp_user
     ldr r0, =COD_USER
     bx r0
    
