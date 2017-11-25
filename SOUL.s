@@ -118,6 +118,9 @@ SET_TZIC:
     msr  CPSR,  MODO_IRQ  @IRQ mode sem interrupcoes 
     ldr r0, =sp_irq
     mov sp, r0
+
+    msr CPSR_c, #0x1F
+    ldr sp, =sp_system
    
     @ volta para o modo supervisor     
     msr CPSR_c, #0x13
@@ -146,6 +149,7 @@ SET_GPIO:
     @ TRANSFERE  o fluxo para o codigo do usuario
     .set COD_USER, 0x77812000
     
+    ldr sp, =sp_user
     ldr r0, =COD_USER
     bx r0
    
@@ -533,16 +537,20 @@ CONTADOR:
 
 @ Alocando um espaco para a pilha de IRQ
 pilha_IRQ:
-    .skip 64
+    .skip 1024
 sp_irq:
   
 pilha_super:
-    .skip 100
+    .skip 1024
 sp_SUPER:
     
 pilha_user:
-    .skip 300
+    .skip 1024
 sp_user:
+
+pilha_system:
+    .skip 1024
+sp_system:
 
 @ Alocando espaco para o vetor de callbacks
 callback_sonar_vector:
