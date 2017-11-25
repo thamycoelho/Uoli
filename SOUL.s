@@ -517,7 +517,7 @@ register_proximity_callback:
     ldr r3, =callback_distance_vector
     str r1, [r3, r4]
     ldr r3, =callback_function_vector
-    str r3, [r3, r4]
+    str r2, [r3, r4]
 
     ldr r3, =qtd_callback
     ldr r4, [r3]

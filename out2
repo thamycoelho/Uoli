@@ -1,0 +1,335 @@
+
+SOUL.x:     file format elf32-littlearm
+
+
+Disassembly of section .iv:
+
+778005e0 <_start>:
+778005e0:	ea00003e 	b	778006e0 <RESET_HANDLER>
+778005e4:	00000000 	andeq	r0, r0, r0
+778005e8:	ea000070 	b	778007b0 <SYSCALL_HANDLE>
+	...
+778005f8:	ea000061 	b	77800784 <IRQ_HANDLE>
+	...
+
+778006e0 <RESET_HANDLER>:
+778006e0:	e59f2254 	ldr	r2, [pc, #596]	; 7780093c <register_proximity_callback>
+778006e4:	e3a00000 	mov	r0, #0	; 0x0
+778006e8:	e5820000 	str	r0, [r2]
+778006ec:	e59f024c 	ldr	r0, [pc, #588]	; 77800940 <register_proximity_callback+0x4>
+778006f0:	ee0c0f10 	mcr	15, 0, r0, cr12, cr0, {0}
+778006f4:	e329f0d2 	msr	CPSR_fc, #210	; 0xd2
+778006f8:	e59f0244 	ldr	r0, [pc, #580]	; 77800944 <register_proximity_callback+0x8>
+778006fc:	e1a0d000 	mov	sp, r0
+77800700:	e321f0d3 	msr	CPSR_c, #211	; 0xd3
+77800704:	e59f023c 	ldr	r0, [pc, #572]	; 77800948 <register_proximity_callback+0xc>
+77800708:	e3a01041 	mov	r1, #65	; 0x41
+7780070c:	e5801000 	str	r1, [r0]
+77800710:	e3a00000 	mov	r0, #0	; 0x0
+77800714:	e59f1230 	ldr	r1, [pc, #560]	; 7780094c <register_proximity_callback+0x10>
+77800718:	e5810000 	str	r0, [r1]
+7780071c:	e3a00064 	mov	r0, #100	; 0x64
+77800720:	e59f1228 	ldr	r1, [pc, #552]	; 77800950 <register_proximity_callback+0x14>
+77800724:	e5810000 	str	r0, [r1]
+77800728:	e3a00001 	mov	r0, #1	; 0x1
+7780072c:	e59f1220 	ldr	r1, [pc, #544]	; 77800954 <register_proximity_callback+0x18>
+77800730:	e5810000 	str	r0, [r1]
+
+77800734 <SET_TZIC>:
+77800734:	e59f121c 	ldr	r1, [pc, #540]	; 77800958 <register_proximity_callback+0x1c>
+77800738:	e3a00080 	mov	r0, #128	; 0x80
+7780073c:	e5810084 	str	r0, [r1, #132]
+77800740:	e3a00080 	mov	r0, #128	; 0x80
+77800744:	e5810104 	str	r0, [r1, #260]
+77800748:	e5910424 	ldr	r0, [r1, #1060]
+7780074c:	e3c004ff 	bic	r0, r0, #-16777216	; 0xff000000
+77800750:	e3a02001 	mov	r2, #1	; 0x1
+77800754:	e1800c02 	orr	r0, r0, r2, lsl #24
+77800758:	e5810424 	str	r0, [r1, #1060]
+7780075c:	e0200000 	eor	r0, r0, r0
+77800760:	e581000c 	str	r0, [r1, #12]
+77800764:	e3a00001 	mov	r0, #1	; 0x1
+77800768:	e5810000 	str	r0, [r1]
+
+7780076c <SET_GPIO>:
+7780076c:	e59f01e8 	ldr	r0, [pc, #488]	; 7780095c <register_proximity_callback+0x20>
+77800770:	e59f11e8 	ldr	r1, [pc, #488]	; 77800960 <register_proximity_callback+0x24>
+77800774:	e5801004 	str	r1, [r0, #4]
+77800778:	e321f010 	msr	CPSR_c, #16	; 0x10
+7780077c:	e59f01e0 	ldr	r0, [pc, #480]	; 77800964 <register_proximity_callback+0x28>
+77800780:	e12fff10 	bx	r0
+
+77800784 <IRQ_HANDLE>:
+77800784:	e59f01dc 	ldr	r0, [pc, #476]	; 77800968 <register_proximity_callback+0x2c>
+77800788:	e3a01001 	mov	r1, #1	; 0x1
+7780078c:	e5801000 	str	r1, [r0]
+77800790:	e59f01a4 	ldr	r0, [pc, #420]	; 7780093c <register_proximity_callback>
+77800794:	e5901000 	ldr	r1, [r0]
+77800798:	e2811001 	add	r1, r1, #1	; 0x1
+7780079c:	e5801000 	str	r1, [r0]
+778007a0:	e59e0000 	ldr	r0, [lr]
+778007a4:	e2400004 	sub	r0, r0, #4	; 0x4
+778007a8:	e58e0000 	str	r0, [lr]
+778007ac:	e1b0f00e 	movs	pc, lr
+
+778007b0 <SYSCALL_HANDLE>:
+778007b0:	e3570010 	cmp	r7, #16	; 0x10
+778007b4:	0a000034 	beq	7780088c <read_sonar>
+778007b8:	e3570011 	cmp	r7, #17	; 0x11
+778007bc:	0a00005e 	beq	7780093c <register_proximity_callback>
+778007c0:	e3570012 	cmp	r7, #18	; 0x12
+778007c4:	0a000007 	beq	778007e8 <set_motor_speed>
+778007c8:	e3570013 	cmp	r7, #19	; 0x13
+778007cc:	0a000017 	beq	77800830 <set_motors_speed>
+778007d0:	e3570014 	cmp	r7, #20	; 0x14
+778007d4:	0a000026 	beq	77800874 <get_time>
+778007d8:	e3570015 	cmp	r7, #21	; 0x15
+778007dc:	0a000027 	beq	77800880 <set_time>
+778007e0:	e3570016 	cmp	r7, #22	; 0x16
+778007e4:	0a000053 	beq	77800938 <set_alarm>
+
+778007e8 <set_motor_speed>:
+778007e8:	e3500001 	cmp	r0, #1	; 0x1
+778007ec:	83e00000 	mvnhi	r0, #0	; 0x0
+778007f0:	81b0f00e 	movshi	pc, lr
+778007f4:	e351003f 	cmp	r1, #63	; 0x3f
+778007f8:	83e00001 	mvnhi	r0, #1	; 0x1
+778007fc:	81b0f00e 	movshi	pc, lr
+77800800:	e3500000 	cmp	r0, #0	; 0x0
+77800804:	e3a02000 	mov	r2, #0	; 0x0
+77800808:	e1822081 	orr	r2, r2, r1, lsl #1
+7780080c:	e59f0148 	ldr	r0, [pc, #328]	; 7780095c <register_proximity_callback+0x20>
+77800810:	e5901000 	ldr	r1, [r0]
+77800814:	03c1177f 	biceq	r1, r1, #33292288	; 0x1fc0000
+77800818:	13c114fe 	bicne	r1, r1, #-33554432	; 0xfe000000
+7780081c:	01811902 	orreq	r1, r1, r2, lsl #18
+77800820:	11811c82 	orrne	r1, r1, r2, lsl #25
+77800824:	e5801000 	str	r1, [r0]
+77800828:	e3a00000 	mov	r0, #0	; 0x0
+7780082c:	e1b0f00e 	movs	pc, lr
+
+77800830 <set_motors_speed>:
+77800830:	e350003f 	cmp	r0, #63	; 0x3f
+77800834:	83e00000 	mvnhi	r0, #0	; 0x0
+77800838:	81b0f00e 	movshi	pc, lr
+7780083c:	e351003f 	cmp	r1, #63	; 0x3f
+77800840:	83e00001 	mvnhi	r0, #1	; 0x1
+77800844:	81b0f00e 	movshi	pc, lr
+77800848:	e3a02000 	mov	r2, #0	; 0x0
+7780084c:	e1802080 	orr	r2, r0, r0, lsl #1
+77800850:	e1812381 	orr	r2, r1, r1, lsl #7
+77800854:	e59f0100 	ldr	r0, [pc, #256]	; 7780095c <register_proximity_callback+0x20>
+77800858:	e5901000 	ldr	r1, [r0]
+7780085c:	e59f3108 	ldr	r3, [pc, #264]	; 7780096c <register_proximity_callback+0x30>
+77800860:	e1c11003 	bic	r1, r1, r3
+77800864:	e1811902 	orr	r1, r1, r2, lsl #18
+77800868:	e5801000 	str	r1, [r0]
+7780086c:	e3a00000 	mov	r0, #0	; 0x0
+77800870:	e1b0f00e 	movs	pc, lr
+
+77800874 <get_time>:
+77800874:	e59f00c0 	ldr	r0, [pc, #192]	; 7780093c <register_proximity_callback>
+77800878:	e5900000 	ldr	r0, [r0]
+7780087c:	e1b0f00e 	movs	pc, lr
+
+77800880 <set_time>:
+77800880:	e59f10b4 	ldr	r1, [pc, #180]	; 7780093c <register_proximity_callback>
+77800884:	e5810000 	str	r0, [r1]
+77800888:	e1b0f00e 	movs	pc, lr
+
+7780088c <read_sonar>:
+7780088c:	e350000f 	cmp	r0, #15	; 0xf
+77800890:	83e00000 	mvnhi	r0, #0	; 0x0
+77800894:	81b0f00e 	movshi	pc, lr
+77800898:	e59f10bc 	ldr	r1, [pc, #188]	; 7780095c <register_proximity_callback+0x20>
+7780089c:	e5912000 	ldr	r2, [r1]
+778008a0:	e3c2203e 	bic	r2, r2, #62	; 0x3e
+778008a4:	e1822100 	orr	r2, r2, r0, lsl #2
+778008a8:	e5812000 	str	r2, [r1]
+778008ac:	e3a03000 	mov	r3, #0	; 0x0
+
+778008b0 <for_time1>:
+778008b0:	e35300c8 	cmp	r3, #200	; 0xc8
+778008b4:	aa000001 	bge	778008c0 <fim_for_time1>
+778008b8:	e2833001 	add	r3, r3, #1	; 0x1
+778008bc:	eafffffb 	b	778008b0 <for_time1>
+
+778008c0 <fim_for_time1>:
+778008c0:	e3a03001 	mov	r3, #1	; 0x1
+778008c4:	e1a03083 	lsl	r3, r3, #1
+778008c8:	e1822003 	orr	r2, r2, r3
+778008cc:	e5812000 	str	r2, [r1]
+778008d0:	e3a03000 	mov	r3, #0	; 0x0
+
+778008d4 <for_time2>:
+778008d4:	e35300c8 	cmp	r3, #200	; 0xc8
+778008d8:	aa000001 	bge	778008e4 <fim_for_time2>
+778008dc:	e2833001 	add	r3, r3, #1	; 0x1
+778008e0:	eafffffb 	b	778008d4 <for_time2>
+
+778008e4 <fim_for_time2>:
+778008e4:	e5912000 	ldr	r2, [r1]
+778008e8:	e3c22002 	bic	r2, r2, #2	; 0x2
+778008ec:	e5812000 	str	r2, [r1]
+
+778008f0 <loop>:
+778008f0:	e3a03000 	mov	r3, #0	; 0x0
+
+778008f4 <for_time3>:
+778008f4:	e3530096 	cmp	r3, #150	; 0x96
+778008f8:	aa000001 	bge	77800904 <fim_for_time3>
+778008fc:	e2833001 	add	r3, r3, #1	; 0x1
+77800900:	eafffffb 	b	778008f4 <for_time3>
+
+77800904 <fim_for_time3>:
+77800904:	e5912000 	ldr	r2, [r1]
+77800908:	e2022001 	and	r2, r2, #1	; 0x1
+7780090c:	e3520001 	cmp	r2, #1	; 0x1
+77800910:	0a000000 	beq	77800918 <fim_loop>
+77800914:	eafffff5 	b	778008f0 <loop>
+
+77800918 <fim_loop>:
+77800918:	e59f103c 	ldr	r1, [pc, #60]	; 7780095c <register_proximity_callback+0x20>
+7780091c:	e5910008 	ldr	r0, [r1, #8]
+77800920:	e3a020ff 	mov	r2, #255	; 0xff
+77800924:	e1a02082 	lsl	r2, r2, #1
+77800928:	e282200f 	add	r2, r2, #15	; 0xf
+7780092c:	e0000302 	and	r0, r0, r2, lsl #6
+77800930:	e1a00320 	lsr	r0, r0, #6
+77800934:	e1b0f00e 	movs	pc, lr
+
+77800938 <set_alarm>:
+77800938:	e5d01000 	ldrb	r1, [r0]
+
+7780093c <register_proximity_callback>:
+7780093c:	77801800 	.word	0x77801800
+77800940:	778005e0 	.word	0x778005e0
+77800944:	77801844 	.word	0x77801844
+77800948:	53fa0000 	.word	0x53fa0000
+7780094c:	53fa0004 	.word	0x53fa0004
+77800950:	53fa0010 	.word	0x53fa0010
+77800954:	53fa000c 	.word	0x53fa000c
+77800958:	0fffc000 	.word	0x0fffc000
+7780095c:	53f84000 	.word	0x53f84000
+77800960:	fffc003e 	.word	0xfffc003e
+77800964:	77812000 	.word	0x77812000
+77800968:	53fa0008 	.word	0x53fa0008
+7780096c:	fffc0000 	.word	0xfffc0000
+
+Disassembly of section .data:
+
+77801800 <__data_start>:
+77801800:	00000000 	.word	0x00000000
+
+77801804 <pilha_IRQ>:
+	...
+
+Disassembly of section .debug_aranges:
+
+00000000 <.debug_aranges>:
+   0:	0000001c 	andeq	r0, r0, ip, lsl r0
+   4:	00000002 	andeq	r0, r0, r2
+   8:	00040000 	andeq	r0, r4, r0
+   c:	00000000 	andeq	r0, r0, r0
+  10:	778005e0 	strvc	r0, [r0, r0, ror #11]
+  14:	00000390 	muleq	r0, r0, r3
+	...
+
+Disassembly of section .debug_info:
+
+00000000 <.debug_info>:
+   0:	0000003a 	andeq	r0, r0, sl, lsr r0
+   4:	00000002 	andeq	r0, r0, r2
+   8:	01040000 	tsteq	r4, r0
+   c:	00000000 	andeq	r0, r0, r0
+  10:	778005e0 	strvc	r0, [r0, r0, ror #11]
+  14:	77800970 	undefined
+  18:	4c554f53 	mrrcmi	15, 5, r4, r5, cr3
+  1c:	2f00732e 	svccs	0x0000732e
+  20:	656d6f68 	strbvs	r6, [sp, #-3944]!
+  24:	34636d2f 	strbtcc	r6, [r3], #-3375
+  28:	552f3430 	strpl	r3, [pc, #-1072]!	; fffffc00 <GPIO_PINO+0x3fbc2>
+  2c:	00696c6f 	rsbeq	r6, r9, pc, ror #24
+  30:	20554e47 	subscs	r4, r5, r7, asr #28
+  34:	32205341 	eorcc	r5, r0, #67108865	; 0x4000001
+  38:	0039312e 	eorseq	r3, r9, lr, lsr #2
+  3c:	Address 0x0000003c is out of bounds.
+
+
+Disassembly of section .debug_abbrev:
+
+00000000 <.debug_abbrev>:
+   0:	10001101 	andne	r1, r0, r1, lsl #2
+   4:	12011106 	andne	r1, r1, #-2147483647	; 0x80000001
+   8:	1b080301 	blne	200c14 <_stack+0x180c14>
+   c:	13082508 	movwne	r2, #34056	; 0x8508
+  10:	00000005 	andeq	r0, r0, r5
+
+Disassembly of section .debug_line:
+
+00000000 <.debug_line>:
+   0:	000000d7 	ldrdeq	r0, [r0], -r7
+   4:	001d0002 	andseq	r0, sp, r2
+   8:	01020000 	tsteq	r2, r0
+   c:	000d0efb 	strdeq	r0, [sp], -fp
+  10:	01010101 	tsteq	r1, r1, lsl #2
+  14:	01000000 	tsteq	r0, r0
+  18:	00010000 	andeq	r0, r1, r0
+  1c:	4c554f53 	mrrcmi	15, 5, r4, r5, cr3
+  20:	0000732e 	andeq	r7, r0, lr, lsr #6
+  24:	00000000 	andeq	r0, r0, r0
+  28:	05e00205 	strbeq	r0, [r0, #517]!
+  2c:	2c037780 	stccs	7, cr7, [r3], {128}
+  30:	02854d01 	addeq	r4, r5, #64	; 0x40
+  34:	2f2f1974 	svccs	0x002f1974
+  38:	2f302f31 	svccs	0x00302f31
+  3c:	2f31312f 	svccs	0x0031312f
+  40:	2f2f312f 	svccs	0x002f312f
+  44:	312f2f31 	teqcc	pc, r1, lsr pc
+  48:	0e032f2f 	cdpeq	15, 0, cr2, cr3, cr15, {1}
+  4c:	332f312e 	teqcc	pc, #-2147483637	; 0x8000000b
+  50:	2f2f332f 	svccs	0x002f332f
+  54:	2f312f2f 	svccs	0x00312f2f
+  58:	0f032f31 	svceq	0x00032f31
+  5c:	312f2f2e 	teqcc	pc, lr, lsr #30
+  60:	2f322f33 	svccs	0x00322f33
+  64:	2f2f312f 	svccs	0x002f312f
+  68:	2f2f312f 	svccs	0x002f312f
+  6c:	2f2f3630 	svccs	0x002f3630
+  70:	2f2f2f2f 	svccs	0x002f2f2f
+  74:	2f2f2f2f 	svccs	0x002f2f2f
+  78:	032f2f2f 	teqeq	pc, #188	; 0xbc
+  7c:	2f2f2e0f 	svccs	0x002f2e0f
+  80:	312f2f30 	teqcc	pc, r0, lsr pc
+  84:	2f2f2f30 	svccs	0x002f2f30
+  88:	2f2f2f2f 	svccs	0x002f2f2f
+  8c:	032f302f 	teqeq	pc, #47	; 0x2f
+  90:	2f2f2e0f 	svccs	0x002f2e0f
+  94:	312f2f2f 	teqcc	pc, pc, lsr #30
+  98:	2f312f2f 	svccs	0x00312f2f
+  9c:	2f2f2f2f 	svccs	0x002f2f2f
+  a0:	2f362f31 	svccs	0x00362f31
+  a4:	302f3530 	eorcc	r3, pc, r0, lsr r5
+  a8:	2f2e0c03 	svccs	0x002e0c03
+  ac:	312f302f 	teqcc	pc, pc, lsr #32
+  b0:	30302f2f 	eorscc	r2, r0, pc, lsr #30
+  b4:	322f2f2f 	eorcc	r2, pc, #188	; 0xbc
+  b8:	302f2f2f 	eorcc	r2, pc, pc, lsr #30
+  bc:	2f2f2f30 	svccs	0x002f2f30
+  c0:	312f2f33 	teqcc	pc, r3, lsr pc
+  c4:	2f2f2f30 	svccs	0x002f2f30
+  c8:	2f2f2f31 	svccs	0x002f2f31
+  cc:	2f2f312f 	svccs	0x002f312f
+  d0:	2f2f2f2f 	svccs	0x002f2f2f
+  d4:	1c02312f 	stfnes	f3, [r2], {47}
+  d8:	Address 0x000000d8 is out of bounds.
+
+
+Disassembly of section .ARM.attributes:
+
+00000000 <_stack-0x80000>:
+   0:	00001341 	andeq	r1, r0, r1, asr #6
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	00000009 	andeq	r0, r0, r9
+  10:	01080206 	tsteq	r8, r6, lsl #4
