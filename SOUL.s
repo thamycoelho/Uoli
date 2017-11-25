@@ -228,7 +228,7 @@ fim_perccore_vetor_alarm:
     
     pop {r0}
     msr SPSR, r0
-    pop {r0-r11,lr}
+    pop {r0-r12,lr}
     @ Subtraindo em 4 unidades o LR
     sub lr, #4
     movs pc, lr 

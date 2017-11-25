@@ -16,19 +16,19 @@
 
 @ Chama a syscall set_motor_speed
 set_motor_speed:
-    push {r4-r11, lr}
+    push {r1-r12, lr}
     ldrb r2, [r0]
     ldrb r1, [r0, #1]
     mov r0, r2
     
     mov r7, #18
     svc 0x0
-    pop {r4-r11, lr}
+    pop {r1-r12, lr}
     mov pc, lr
 
 @ Chama a syscall set_motors_speed
 set_motors_speed:
-    push {r4-r11, lr}
+    push {r1-r12, lr}
     ldrb r2, [r0, #1]
     ldrb r3, [r1, #1]
 
@@ -37,20 +37,20 @@ set_motors_speed:
 
     mov r7, #19
     svc 0x0
-    pop {r4-r11, lr}
+    pop {r1-r12, lr}
     mov pc, lr
 
 @ Chama a syscall read sonar
 read_sonar:
-    push {r4-r11, lr}
+    push {r1-r12, lr}
     mov r7, #16
     svc 0x0
-    pop {r4-r11, lr}
+    pop {r1-r12, lr}
     mov pc,lr
 
 @ Chama a syscal read_sonars
 read_sonars:
-    push {r4-r11, lr}
+    push {r1-r12, lr}
     ldr r3, [r2]
     mov r2, r3      @r2 guarda o endereco de memoria do vetor de distancias
     mov r3, r0      @r3 guarda o sonar inicial
@@ -70,43 +70,43 @@ loop_sonars:
     b loop_sonars
     
 fim_loop_sonars:
-    pop {r4-r11, lr}
+    pop {r1-r12, lr}
     mov pc, lr
 
 @ Chama a syscall register_proximity_callback
 register_proximity_callback:
-    push {r4-r11, lr}
+    push {r1-r12, lr}
     
     mov r7, #17
     svc 0x0
     
-    pop {r4-r11, lr}
+    pop {r1-r12, lr}
     mov pc,lr
 
 @ Chama a syscall set_alarm
 add_alarm:
-    push {r4-r11, lr}
+    push {r1-r12, lr}
 
     
-    pop {r4-r11, lr}
+    pop {r1-r12, lr}
 
 @ Chama a syscall get_time
 get_time:
-    push {r4-r11, lr}
+    push {r1-r12, lr}
     mov r8, r0
     
     mov r7, #20
     svc 0x0
 
     str r0, [r8]
-    @pop {r4-r11, lr}
+    pop {r1-r12, lr}
     mov pc, lr
 
 @ Chama a syscall set_time
 set_time:
-    push {r4-r11, lr}
+    push {r1-r12, lr}
     mov r7, #21
     svc 0x0
 
-    pop {r4-r11, lr}
+    pop {r1-r12, lr}
     mov pc, lr
