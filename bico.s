@@ -99,7 +99,7 @@ get_time:
     svc 0x0
 
     str r0, [r8]
-    pop {r4-r11, lr}
+    @pop {r4-r11, lr}
     mov pc, lr
 
 @ Chama a syscall set_time
