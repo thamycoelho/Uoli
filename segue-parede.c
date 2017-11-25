@@ -19,17 +19,7 @@ int _start(int argv, char** argc){
     motor1.id = 1;
     motor1.speed = 40;
     set_motors_speed(&motor0, &motor1);
-
-    while(1){
-        if(read_sonar(sonar_id)<= 1200){
-            motor0.speed = 0;
-            set_motor_speed(&motor0);
-            break;
-        }
-       // get_time(&time);
-
-    }
-   // register_proximity_callback(sonar_id, 500, vira_uoli);
+    register_proximity_callback(sonar_id, 1200, vira_uoli);
     
     while(1);
     return 0;
@@ -37,6 +27,8 @@ int _start(int argv, char** argc){
 
 void *vira_uoli(){
 
+    motor0.speed = 0;
+    set_motor_speed(&motor0);
 
 }
 
