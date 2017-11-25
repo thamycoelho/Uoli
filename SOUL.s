@@ -232,14 +232,20 @@ fim_perccore_vetor_alarm:
     @ Subtraindo em 4 unidades o LR
     sub lr, #4
     movs pc, lr 
-
     
 @ Tratamento das Syscalls
 SYSCALL_HANDLE:
+    push {r1-r12, lr}
+    mrs r12, SPSR
+    push {r12}
+    
+    msr CPSR, 0x13
+    
     @ Definicao da velocidade maxima
     .equ MAX_SPEED, 63
     .equ MAX_CALLBACK, 8
     .equ MAX_ALARM, 8
+    
     @ Verifica qual a syscall chamada    
     
     cmp r7, #16
@@ -257,6 +263,11 @@ SYSCALL_HANDLE:
     cmp r7, #22
     beq set_alarm
 
+    pop {r12}
+    msr SPSR, r12
+    pop {r1-r12, lr}
+    movs pc, lr
+
 @ Define a velocidade do motor 0 ou do motor 1
 @ Parametros: 
 @ R0: Identificador dos motores
@@ -265,7 +276,6 @@ SYSCALL_HANDLE:
 @ r0: -1 caso o identificador do motor seja invalido, -2 caso a velocidade seja invalida, 0 caso aplicou a velocidade
     
 set_motor_speed:
-    push {r1-r11, lr}
     @ Mascara para pegar a velocidade do motor e setar o motor_write
     .set SET_MOTOR0,    0x01FC0000
     .set SET_MOTOR1,    0xFE000000
@@ -295,7 +305,9 @@ set_motor_speed:
     mov r0, #0
     
 fim_set_motor_speed:    
-    pop {r1-r11, lr}
+    pop {r12}
+    msr SPSR, r12
+    pop {r1-r12, lr}
     movs pc, lr
         
 @ Define a velocidade dos motores
@@ -306,7 +318,6 @@ fim_set_motor_speed:
 @ r0: -1 caso a velocidade do motor 0 seja invalida, -2 caso a velocidade do motor 1 seja invalida, 0 caso definiu as velocidades
 
 set_motors_speed:
-    push {r1-r11, lr}
     @ Mascara para aplicar a velocidade dos motores
     .set SET_MOTORS, 0xFFFC0000
 
@@ -334,7 +345,9 @@ set_motors_speed:
     @ retorna para o codigo do usuario
     mov r0, #0
 fim_set_motors_speed:
-    pop {r1-r11, lr}
+    pop {r12}
+    msr SPSR, r12
+    pop {r1-r12, lr}
     movs pc, lr
    
 @ Funcao retorna o tempo do sistema
@@ -342,12 +355,13 @@ fim_set_motors_speed:
 @ r0: tempo do sistema
 
 get_time:
-    push {r1-r11, lr}
     ldr r0, =CONTADOR
     ldr r1, [r0]
     mov r0, r1
     
-    pop {r1-r11, lr}
+    pop {r12}
+    msr SPSR, r12
+    pop {r1-r12, lr}
     movs pc, lr
 
 @ Funcao define um tempo para o sistema
@@ -355,11 +369,12 @@ get_time:
 @ r0: tempo do sistema
 
 set_time:
-    push {r1-r11, lr}
     ldr r1, =CONTADOR
     str r0, [r1]
 
-    pop {r1-r11, lr}
+    pop {r12}
+    msr SPSR, r12
+    pop {r1-r12, lr}
     movs pc, lr
 
 @ Funcao le o dado do sonar 
@@ -369,7 +384,6 @@ set_time:
 @ r0: -1 caso o identificador do sonar seja invalido, valor lido no sonar caso seja um sonar valido
 
 read_sonar:
-    push {r1-r11, lr}
     
     @ mascara para modificar o MUX em GPIO_DR
     .equ SONARES, 0x3E
@@ -438,11 +452,12 @@ fim_loop:
     mov r0, r0, lsr #6
 
 fim_read_sonar:
-    pop {r1 - r11, lr}
+    pop {r12}
+    msr SPSR, r12
+    pop {r1-r12, lr}
     movs pc, lr
 
 set_alarm:
-    push {r1-r11, lr}
     ldr r2, =qtd_alarm
     ldr r3, [r2]
     cmp r3, #MAX_ALARM
@@ -469,12 +484,13 @@ set_alarm:
     add r3, #1
     str r3, [r2]
 fim_alarm:
-    pop {r1-r11, lr}
+    pop {r12}
+    msr SPSR, r12
+    pop {r1-r12, lr}
     movs pc, lr
     
 
 register_proximity_callback:
-    push {r1-r11, lr}
     cmp r0, #15
     movhi r0, #-2
     bhi callback_fim
@@ -500,7 +516,9 @@ register_proximity_callback:
     str r4, [r3]
     
 callback_fim:
-    pop {r1-r11, lr}
+    pop {r12}
+    msr SPSR, r12
+    pop {r1-r12, lr}
     movs pc, lr
 
 .data 
