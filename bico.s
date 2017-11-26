@@ -95,16 +95,18 @@ add_alarm:
     svc 0x0
     
     pop {r1-r12, lr}
+    mov pc, lr
 
 @ Chama a syscall get_time
 get_time:
     push {r1-r12, lr}
-    mov r8, r0
+    push {r0}
     
     mov r7, #20
     svc 0x0
 
-    str r0, [r8]
+    pop {r1}
+    str r0, [r1]
     pop {r1-r12, lr}
     mov pc, lr
 

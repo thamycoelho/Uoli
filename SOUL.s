@@ -164,12 +164,6 @@ IRQ_HANDLE:
     mov r1, #0x1
     str r1, [r0]
 
-    @ Incrementando o contador em uma unidade
-    ldr r0, =contador
-    ldr r1, [r0]
-    add r1, #1
-    str r1, [r0]
-
 @ Rotinha do alarm
 alarm:
     @ Verifica se tem uma callback ou alarme sendo executada, se tiver vai pro final
@@ -177,14 +171,14 @@ alarm:
     ldr r1, [r0]
     cmp r1, #1
 
-    b fim_percorre_vetor_callback
+    beq fim_percorre_vetor_callback
 
     @ em r1 tem a quantidade de alarms adicionados e em r2 o i do loop
     ldr r0, =qtd_alarm
     ldr r6, [r0]
     mov r2, #0
 
-@ Percorre os vetores de alarm comparando o tempo do sistema e executando a fução casoesteja no tempon
+@ Percorre os vetores de alarm comparando o tempo do sistema e executando a fução caso esteja no tempo
 percorre_vetor_alarm:
     cmp r2, r6
     bhs fim_perccore_vetor_alarm
@@ -197,7 +191,7 @@ percorre_vetor_alarm:
     svc 0x0
 
     cmp r0, r5
-    bhi proximo_alarm
+    blo proximo_alarm
     ldr r4, =alarm_function_vector
     ldr r5, [r4, r3]
 
@@ -220,12 +214,13 @@ deleta_alarm:
     bhi fim_deleta_alarm
     
     mov r4, r3, lsl #2
+    add r5, r4, #4
     ldr r0, =alarm_time_vector
-    ldr r1, [r0, r4, #4]
+    ldr r1, [r0, r5]
     str r1, [r0, r4]
 
     ldr r0, =alarm_function_vector
-    ldr r1, [r0, r4, #4]
+    ldr r1, [r0, r5]
     str r1, [r0, r4]
     
     add r3, #1
@@ -297,8 +292,12 @@ percorre_vetor_callback:
     add r2, #1
     b percorre_vetor_callback
 fim_percorre_vetor_callback: 
-
     
+    @ Incrementando o contador em uma unidade
+    ldr r0, =contador
+    ldr r1, [r0]
+    add r1, #1
+    str r1, [r0]
     
     @ Restaurando SPSR e os demais registradores
     pop {r0}
@@ -440,9 +439,8 @@ fim_set_motors_speed:
 @ r0: tempo do sistema
 get_time:
     @ Coloca em r0 o tempo do sistema
-    ldr r0, =contador
-    ldr r1, [r0]
-    mov r0, r1
+    ldr r1, =contador
+    ldr r0, [r1]
     
     @ Retorna da syscall
     pop {r12}

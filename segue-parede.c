@@ -3,16 +3,27 @@
 motor_cfg_t motor0;
 motor_cfg_t motor1;
 unsigned short sonar[2];
+unsigned int time;
 
 void *acelera();
 void *ajusta_parede();
+void *para();
 int abs(int a);
 
 int _start(int argv, char** argc){
-    add_alarm(acelera, 15);
+    add_alarm(para, 10);
+    add_alarm(acelera, 20);
 
     register_proximity_callback(4, 1500, ajusta_parede);
-/*
+
+    get_time(&time);
+    while(time < 30){
+        get_time(&time);
+    }
+
+    set_time(0);
+    add_alarm(para, 10);
+    /*
     while(1){
         sonar[0] = read_sonar(0);
         sonar[1] = read_sonar(15);
@@ -57,6 +68,12 @@ void *ajusta_parede(){
     set_motor_speed(&motor0);
 }
 
+void *para(){
+    motor0.speed = 0;
+    motor1.speed = 0;
+
+    set_motors_speed(&motor0, &motor1);
+}
 int abs(int a){
     return a < 0 ? -a : a;
 }
