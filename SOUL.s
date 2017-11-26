@@ -153,7 +153,7 @@ SET_GPIO:
 
 @ Tratando interrupcoes do tipo IRQ   
 IRQ_HANDLE:
-    push {r0-r12,lr}
+    push {r0-r7,lr}
     
     @ Salvando o SPSR na pilha
     mrs r0, SPSR
@@ -183,6 +183,8 @@ percorre_vetor_alarm:
     cmp r2, r6
     bhs fim_perccore_vetor_alarm
     mov r3, r2, lsl #2
+    
+    @ Pega o tempo do alarme
     ldr r4, =alarm_time_vector
     ldr r5, [r4, r3]
     
@@ -190,31 +192,46 @@ percorre_vetor_alarm:
     mov r7, #20
     svc 0x0
 
+    @ Caso ainda nao esteja no tempo vai pro proximo alarme
     cmp r0, r5
     blo proximo_alarm
+
+    @ Pega o endereco da funcao
     ldr r4, =alarm_function_vector
     ldr r5, [r4, r3]
 
+    @ Seta a flag para dizer que ta ocorrendo alarme
     ldr r4, =callflag
     mov r7, #1
     str r7, [r4]
 
-    push {r0-r11, lr}
+    @ Chama a funcao
+    push {r0-r7, lr}
     blx r5
-    pop {r0- r11, lr}
+    pop {r0- r7, lr}
     
+    @ Finaliza esse alarme 
     ldr r4, =callflag
     mov r7, #0
     str r7, [r4]
 
     mov r3, r2
+    
+    @ Comeca a remocao do alarme executado
+    ldr r7, =qtd_alarm
+    ldr r6, [r7]
     sub r6, #1
+    str r6, [r7]
 deleta_alarm:
+    @ Se esta no ultimo alarme vai para o fim
     cmp r3, r6
     bhi fim_deleta_alarm
     
+    @ r5 recebe a proxima posicao do alarme e r4 a posicao atual
     mov r4, r3, lsl #2
     add r5, r4, #4
+
+    @ Coloca a proxima posicao dos vetores na posicao atual
     ldr r0, =alarm_time_vector
     ldr r1, [r0, r5]
     str r1, [r0, r4]
@@ -223,17 +240,17 @@ deleta_alarm:
     ldr r1, [r0, r5]
     str r1, [r0, r4]
     
+    @ Continua realocando as posicoes
     add r3, #1
     b deleta_alarm
 fim_deleta_alarm:
-    sub r2, #1
+    sub r2, #1 @ Subtrai um alarme
 
+@ Continua verificando os alarmes
 proximo_alarm: 
     add r2, #1
     b percorre_vetor_alarm
 fim_perccore_vetor_alarm:
-    ldr r0, =qtd_alarm
-    str r6, [r0]
 
 @ Trata as callbacks programadas
 callback:
@@ -279,9 +296,9 @@ percorre_vetor_callback:
     movls r6, #1
     strls r6, [r4]
 
-    push {r1-r11,lr}    @ Empilha os registradores 
+    push {r1-r7,lr}    @ Empilha os registradores 
     blxls r5            @ Chama a funcao requerida pela callback
-    pop {r1-r11,lr}     @ Desempilha os registradores
+    pop {r1-r7,lr}     @ Desempilha os registradores
 
     @ Zera novamente a flag de callbacks 
     ldr r4, =callflag
@@ -302,7 +319,7 @@ fim_percorre_vetor_callback:
     @ Restaurando SPSR e os demais registradores
     pop {r0}
     msr SPSR, r0
-    pop {r0-r12,lr}
+    pop {r0-r7,lr}
 
     @ Subtrai em 4 unidades o LR e retorna da funcao
     sub lr, #4
@@ -320,9 +337,9 @@ SYSCALL_HANDLE:
     msr SPSR, r11
     
     @ Empilha SPSR e os demais registradores
-    push {r1-r12, lr}
-    mrs r12, SPSR
-    push {r12}
+    push {r1-r4, lr}
+    mrs r4, SPSR
+    push {r4}
     
     @ Definicao da velocidade maxima
     .equ MAX_SPEED, 63
@@ -346,9 +363,9 @@ SYSCALL_HANDLE:
     beq set_alarm
 
     @ Caso a chamada tenha sido feita para uma syscall invalida, retorna
-    pop {r12}
-    msr SPSR, r12
-    pop {r1-r12, lr}
+    pop {r4}
+    msr SPSR, r4
+    pop {r1-r4, lr}
     movs pc, lr
 
 @ Define a velocidade do motor 0 ou do motor 1
@@ -390,9 +407,9 @@ set_motor_speed:
     mov r0, #0
     
 fim_set_motor_speed:    
-    pop {r12}
-    msr SPSR, r12
-    pop {r1-r12, lr}
+    pop {r4}
+    msr SPSR, r4
+    pop {r1-r4, lr}
     movs pc, lr
         
 @ Define a velocidade dos motores
@@ -429,9 +446,9 @@ set_motors_speed:
     @ retorna para o codigo do usuario
     mov r0, #0
 fim_set_motors_speed:
-    pop {r12}
-    msr SPSR, r12
-    pop {r1-r12, lr}
+    pop {r4}
+    msr SPSR, r4
+    pop {r1-r4, lr}
     movs pc, lr
    
 @ Funcao retorna o tempo do sistema
@@ -443,9 +460,9 @@ get_time:
     ldr r0, [r1]
     
     @ Retorna da syscall
-    pop {r12}
-    msr SPSR, r12
-    pop {r1-r12, lr}
+    pop {r4}
+    msr SPSR, r4
+    pop {r1-r4, lr}
     movs pc, lr
 
 @ Funcao define um tempo para o sistema
@@ -457,9 +474,9 @@ set_time:
     str r0, [r1]
 
     @ Retorna da Syscall
-    pop {r12}
-    msr SPSR, r12
-    pop {r1-r12, lr}
+    pop {r4}
+    msr SPSR, r4
+    pop {r1-r4, lr}
     movs pc, lr
 
 @ Funcao le o dado do sonar 
@@ -544,9 +561,9 @@ fim_loop:
 
 @ Retorna da syscall
 fim_read_sonar:
-    pop {r12}
-    msr SPSR, r12
-    pop {r1-r12, lr}
+    pop {r4}
+    msr SPSR, r4
+    pop {r1-r4, lr}
     movs pc, lr
 
 @ Adiciona um alarme
@@ -591,9 +608,9 @@ set_alarm:
 
 @ Retorna da syscall
 fim_alarm:
-    pop {r12}
-    msr SPSR, r12
-    pop {r1-r12, lr}
+    pop {r4}
+    msr SPSR, r4
+    pop {r1-r4, lr}
     movs pc, lr
     
 @ Adiciona uma callback
@@ -641,9 +658,9 @@ register_proximity_callback:
     
 @ Retorna da syscall
 callback_fim:
-    pop {r12}
-    msr SPSR, r12
-    pop {r1-r12, lr}
+    pop {r4}
+    msr SPSR, r4
+    pop {r1-r4, lr}
     movs pc, lr
 
 .data 
