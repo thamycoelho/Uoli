@@ -7,9 +7,7 @@
 .global get_time
 .global set_time
 
-
 .data 
-
 
 .text
 .align 4
@@ -29,8 +27,14 @@ set_motor_speed:
 @ Chama a syscall set_motors_speed
 set_motors_speed:
     push {r1-r12, lr}
-    ldrb r2, [r0, #1]
-    ldrb r3, [r1, #1]
+    ldrb r2, [r0]
+    cmp r2, #0
+    
+    ldreqb r2, [r0, #1]
+    ldreqb r3, [r1, #1]
+    
+    ldrneb r2, [r1, #1]
+    ldrneb r3, [r0, #1]
 
     mov r0, r2
     mov r1, r3
@@ -86,7 +90,9 @@ register_proximity_callback:
 @ Chama a syscall set_alarm
 add_alarm:
     push {r1-r12, lr}
-
+    
+    mov r7, #22
+    svc 0x0
     
     pop {r1-r12, lr}
 

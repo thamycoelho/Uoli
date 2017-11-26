@@ -164,6 +164,82 @@ IRQ_HANDLE:
     mov r1, #0x1
     str r1, [r0]
 
+    @ Incrementando o contador em uma unidade
+    ldr r0, =contador
+    ldr r1, [r0]
+    add r1, #1
+    str r1, [r0]
+
+@ Rotinha do alarm
+alarm:
+    @ Verifica se tem uma callback ou alarme sendo executada, se tiver vai pro final
+    ldr r0, =callflag
+    ldr r1, [r0]
+    cmp r1, #1
+
+    b fim_percorre_vetor_callback
+
+    @ em r1 tem a quantidade de alarms adicionados e em r2 o i do loop
+    ldr r0, =qtd_alarm
+    ldr r6, [r0]
+    mov r2, #0
+
+@ Percorre os vetores de alarm comparando o tempo do sistema e executando a fução casoesteja no tempon
+percorre_vetor_alarm:
+    cmp r2, r6
+    bhs fim_perccore_vetor_alarm
+    mov r3, r2, lsl #2
+    ldr r4, =alarm_time_vector
+    ldr r5, [r4, r3]
+    
+    @ Chama syscall get_time    
+    mov r7, #20
+    svc 0x0
+
+    cmp r0, r5
+    bhi proximo_alarm
+    ldr r4, =alarm_function_vector
+    ldr r5, [r4, r3]
+
+    ldr r4, =callflag
+    mov r7, #1
+    str r7, [r4]
+
+    push {r0-r11, lr}
+    blx r5
+    pop {r0- r11, lr}
+    
+    ldr r4, =callflag
+    mov r7, #0
+    str r7, [r4]
+
+    mov r3, r2
+    sub r6, #1
+deleta_alarm:
+    cmp r3, r6
+    bhi fim_deleta_alarm
+    
+    mov r4, r3, lsl #2
+    ldr r0, =alarm_time_vector
+    ldr r1, [r0, r4, #4]
+    str r1, [r0, r4]
+
+    ldr r0, =alarm_function_vector
+    ldr r1, [r0, r4, #4]
+    str r1, [r0, r4]
+    
+    add r3, #1
+    b deleta_alarm
+fim_deleta_alarm:
+    sub r2, #1
+
+proximo_alarm: 
+    add r2, #1
+    b percorre_vetor_alarm
+fim_perccore_vetor_alarm:
+    ldr r0, =qtd_alarm
+    str r6, [r0]
+
 @ Trata as callbacks programadas
 callback:
     @ Verifica a flag de callbaks para verificar se esta ocorrendo uma chamada de callback no momento
@@ -222,40 +298,7 @@ percorre_vetor_callback:
     b percorre_vetor_callback
 fim_percorre_vetor_callback: 
 
-@ Rotinha do alarm
-alarm:
-    @ em r1 tem a quantidade de alarms adicionados e em r2 o i do loop
-    ldr r0, =qtd_alarm
-    ldr r1, [r0]
-    mov r2, #0
-
-@ Percorre os vetores de alarm comparando o tempo do sistema e executando a fução casoesteja no tempon
-percorre_vetor_alarm:
-    cmp r2, r1
-    bhs fim_perccore_vetor_alarm
-    mov r3, r2, lsl #2
-    ldr r4, =alarm_time_vector
-    ldr r5, [r4, r3]
     
-    @ Chama syscall get_time    
-    mov r7, #20
-    svc 0x0
-
-    cmp r0, r5
-    ldreq r4, =alarm_function_vector
-    ldreq r5, [r4, r3]
-    push {r1-r11, lr}
-    blxeq r5
-    pop {r1- r11, lr}
-    add r2, #1 
-    b percorre_vetor_alarm
-fim_perccore_vetor_alarm:
-    
-    @ Incrementando o contador em uma unidade
-    ldr r0, =contador
-    ldr r1, [r0]
-    add r1, #1
-    str r1, [r0]
     
     @ Restaurando SPSR e os demais registradores
     pop {r0}
